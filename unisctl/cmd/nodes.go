@@ -9,23 +9,28 @@ import (
 var nodesUsage = `Usage:  unisctl nodes [OPTIONS]
 
 Options:
+  -a, --all    Show all nodes (default private nodes)
   -h, --help   help for nodes
 `
+
+var allNodesFlag bool
 
 var nodesCmd = &cobra.Command{
 	Use:   "nodes", 
 	Short: "Display the status of all edge nodes", 
 	Long:  "Display the status of all edge nodes", 
+	Args: cobra.NoArgs, 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 0 {
-			fmt.Println("\"unisctl nodes\" accepts no arguments.")
-			return
+		if allNodesFlag {
+			fmt.Println(allNodesFlag)
+		}else {
+			fmt.Println(allNodesFlag)
 		}
-		fmt.Println("nodes")
 	}, 
 }
 
 func init() {
 	rootCmd.AddCommand(nodesCmd)
 	nodesCmd.SetUsageTemplate(nodesUsage)
+	nodesCmd.Flags().BoolVarP(&allNodesFlag, "all", "a", false, "Show all nodes")
 }

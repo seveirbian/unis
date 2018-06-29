@@ -20,11 +20,8 @@ var signinCmd = &cobra.Command{
 	Use:   "signin", 
 	Short: "Sign in", 
 	Long:  "Sign in", 
+	Args: cobra.NoArgs, 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 0 {
-			fmt.Println("\"unisctl signin\" accepts no arguments.")
-			return
-		}
 		fmt.Println("signin")
 	}, 
 }

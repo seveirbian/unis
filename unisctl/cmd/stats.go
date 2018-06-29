@@ -16,11 +16,8 @@ var statsCmd = &cobra.Command{
 	Use:   "stats", 
 	Short: "Display the status of all components of unis", 
 	Long:  "Display the status of all components of unis", 
+	Args: cobra.NoArgs, 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 0 {
-			fmt.Println("\"unisctl stats\" accepts no arguments.")
-			return
-		}
 		fmt.Println("stats")
 	}, 
 }

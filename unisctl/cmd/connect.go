@@ -16,11 +16,9 @@ var connectCmd = &cobra.Command{
 	Use:   "connect",
 	Short: "Connect to unis-apiserver",
 	Long: "Connect to unis-apiserver",
+	Args: cobra.ExactArgs(1), 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("\"unisctl connect\" requires exactly 1 argument.")
-			return
-		}
+		fmt.Println("connect")
 		fmt.Println(args)
 	},
 }

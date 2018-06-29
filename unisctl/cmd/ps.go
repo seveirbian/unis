@@ -13,20 +13,24 @@ Options:
   -h, --help   help for ps
 `
 
+var allInstancesFlag bool
+
 var psCmd = &cobra.Command{
 	Use:   "ps",
 	Short: "List containers",
 	Long:  "List containers",
+	Args: cobra.NoArgs, 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 0 {
-			fmt.Println("\"unisctl ps\" accepts no arguments.")
-			return
+		if allInstancesFlag {
+			fmt.Println(allInstancesFlag)
+		}else {
+			fmt.Println(allInstancesFlag)
 		}
-		fmt.Println("ps")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(psCmd)
 	psCmd.SetUsageTemplate(psUsage)
+	psCmd.Flags().BoolVarP(&allInstancesFlag, "all", "a", false, "Show all instances")
 }

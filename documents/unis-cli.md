@@ -42,6 +42,7 @@ Usage: unisctl images [OPTIONS]
 List images
 
 Options:
+  -a, --all              Show all images (default private images)
       --help             Print usage
 
 ## unisctl nodes --help
@@ -51,16 +52,17 @@ Usage: unisctl nodes [OPTIONS]
 List the status of all edge nodes
 
 Options:
+  -a, --all               Show all nodes (default private nodes)
       --help              Print Usage
 
 ## unisctl ps --help
 
 Usage: unisctl ps [OPTIONS]
 
-List containers
+List instances
 
 Options:
-  -a, --all              Show all containers (dafault shows just running)
+  -a, --all              Show all instances (dafault private instances)
       --help             Print Usage
 
 ## unisctl pull --help

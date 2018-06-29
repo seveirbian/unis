@@ -14,18 +14,22 @@ Options:
 `
 
 var cfgFile string
+var pushPublicFlag bool
 
 var pushCmd = &cobra.Command{
 	Use:   "push", 
 	Short: "Push an image to registry", 
 	Long:  "Push an image to registry", 
+	Args: cobra.ExactArgs(1), 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("\"unisctl push\" requires exactly 1 argument.")
-			return
-		}
 		fmt.Println("push")
+		fmt.Println(args)
 		fmt.Println(cfgFile)
+		if pushPublicFlag {
+			fmt.Println(pushPublicFlag)
+		}else {
+			fmt.Println(pushPublicFlag)
+		}
 	}, 
 }
 
@@ -34,4 +38,5 @@ func init() {
 	pushCmd.SetUsageTemplate(pushUsage)
 	pushCmd.Flags().StringVarP(&cfgFile, "configure-file", "f", "", "image's configure file (required)")
 	pushCmd.MarkFlagRequired("configure-file")
+	pushCmd.Flags().BoolVarP(&pushPublicFlag, "public", "p", false, "Push a public image")
 }

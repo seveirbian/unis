@@ -27,6 +27,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version", 
 	Short: "Show the unisctl and unisapiserver version", 
 	Long:  "Show the unisctl and unisapiserver version", 
+	Args: cobra.NoArgs, 
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := ctlVersion.Execute(os.Stdout, nil); err != nil {
 			os.Exit(1)

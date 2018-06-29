@@ -16,12 +16,10 @@ var stopCmd = &cobra.Command{
 	Use:   "stop", 
 	Short: "Stop one or more running instances", 
 	Long:  "Stop one or more running instances", 
+	Args: cobra.MinimumNArgs(1), 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("\"unisctl stop\" requires at least 1 argument.")
-			return
-		}
 		fmt.Println("stop")
+		fmt.Println(args)
 	}, 
 }
 

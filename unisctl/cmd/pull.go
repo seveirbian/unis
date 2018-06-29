@@ -16,12 +16,10 @@ var pullCmd = &cobra.Command{
 	Use:   "pull", 
 	Short: "Pull an image from registry", 
 	Long:  "Pull an image from registry", 
+	Args: cobra.ExactArgs(1), 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("\"unisctl pull requires exactly 1 argument.")
-			return
-		}
 		fmt.Println("pull")
+		fmt.Println(args)
 	}, 
 }
 

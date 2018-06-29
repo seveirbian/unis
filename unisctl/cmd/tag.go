@@ -16,12 +16,10 @@ var tagCmd = &cobra.Command{
 	Use:   "tag", 
 	Short: "Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE", 
 	Long:  "Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE", 
+	Args: cobra.ExactArgs(2), 
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 2 {
-			fmt.Println("\"unisctl tag\" requires exactly 2 arguments.")
-			return
-		}
 		fmt.Println("tag")
+		fmt.Println(args)
 	}, 
 }
 
