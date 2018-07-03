@@ -24,10 +24,6 @@ var connectCmd = &cobra.Command{
 	Long:  "Connect to unis-apiserver",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		logrus.WithFields(logrus.Fields{
-			"cmd": "unisctl connect",
-		}).Info("")
-
 		//get unis-apiserver's IP
 		serverIP := args[0]
 		if !strings.HasPrefix(serverIP, "http://") {
@@ -36,7 +32,6 @@ var connectCmd = &cobra.Command{
 				serverIP = serverIP + ":9898"
 			}
 		}
-		logrus.Info("Connecting to " + serverIP)
 
 		//connect to unis-apiserver
 		resp, err := http.Get(serverIP)
@@ -50,7 +45,7 @@ var connectCmd = &cobra.Command{
 				if string(body) == "OK" {
 					fmt.Println("Success to connect unis-apiserver!")
 				} else {
-					logrus.Fatal("Failure: cannot get bad response!")
+					logrus.Fatal(err)
 				}
 			}
 		}
@@ -59,11 +54,11 @@ var connectCmd = &cobra.Command{
 		ConfigContent.Apiserver = serverIP
 		configInJSON, err := json.Marshal(ConfigContent)
 		if err != nil {
-			logrus.Fatal("Failure: cannot encode configure.json")
+			logrus.Fatal(err)
 		}
 		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, os.ModePerm)
 		if err != nil {
-			logrus.Fatal("Failure: cannot write into " + defaultPath + defaultFileName)
+			logrus.Fatal(err)
 		}
 	},
 }

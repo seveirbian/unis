@@ -36,9 +36,6 @@ func Execute() {
 
 func init() {
 	logrus.SetLevel(logrus.InfoLevel)
-	logrus.WithFields(logrus.Fields{
-		"cmd": "unisctl ",
-	}).Info("")
 
 	//detect whether /home/.unis/unisctl exists, if not create it
 	createPath()
@@ -52,25 +49,19 @@ func init() {
 
 		configInJSON, err := json.Marshal(ConfigContent)
 		if err != nil {
-			logrus.Fatal("Failure: cannot encode configure")
-			fmt.Println(err)
+			logrus.Fatal(err)
 		}
 
 		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, os.ModePerm)
 		if err != nil {
-			fmt.Println(err)
-			logrus.Fatal("Failure: cannot wirte configure into " + defaultPath + defaultFileName)
-			fmt.Println(err)
-		} else {
-			logrus.Info("Creating " + defaultPath + defaultFileName)
+			logrus.Fatal(err)
 		}
 	} else {
 		configInJSON, err := ioutil.ReadFile(defaultPath + defaultFileName)
 		err = json.Unmarshal(configInJSON, &ConfigContent)
 		if err != nil {
-			logrus.Fatal("Failure: cannot decode configure.json")
+			logrus.Fatal(err)
 		}
-		logrus.Info("Reading from " + defaultPath + defaultFileName)
 	}
 }
 
@@ -80,8 +71,7 @@ func createPath() {
 		err = os.Mkdir(defaultPath, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
-			logrus.Fatal("Failure: mkdir: " + defaultPath)
+			logrus.Fatal(err)
 		}
-		logrus.Info("Success: mkdir: " + defaultPath)
 	}
 }
