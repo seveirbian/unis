@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var defaultPath = os.Getenv("HOME") + "/.unis/"
+var defaultPath = os.Getenv("HOME") + "/.unis/unisctl/"
 var defaultFileName = "configure.json"
 
 type Config struct {
@@ -38,7 +38,7 @@ func init() {
 		"cmd": "unisctl ",
 	}).Info("")
 
-	//detect whether /home/.unis/ exists, if not create it
+	//detect whether /home/.unis/unisctl exists, if not create it
 	createPath()
 
 	// create configure.json
@@ -57,7 +57,7 @@ func init() {
 			fmt.Println(err)
 		}
 
-		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, 0777)
+		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
 			logrus.Fatal("Failing to wirte configure into " + defaultPath + defaultFileName)
@@ -73,7 +73,7 @@ func init() {
 func createPath() {
 	_, err := os.Stat(defaultPath)
 	if err != nil {
-		err = os.Mkdir(defaultPath, 0777)
+		err = os.Mkdir(defaultPath, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
 			logrus.Fatal("Failing creating dir: " + defaultPath)

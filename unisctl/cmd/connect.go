@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -66,7 +67,7 @@ var connectCmd = &cobra.Command{
 		if err != nil {
 			logrus.Fatal("Failing encoding configure.json")
 		}
-		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, 0777)
+		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, os.ModePerm)
 		if err != nil {
 			logrus.Fatal("Failing writing into " + defaultPath + defaultFileName)
 		}
