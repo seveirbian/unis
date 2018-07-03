@@ -44,7 +44,7 @@ func init() {
 	// create configure.json
 	_, err := ioutil.ReadFile(defaultPath + defaultFileName)
 	if err != nil {
-		logrus.Info("Failing finding " + defaultPath + defaultFileName)
+		logrus.Info("Failure: cannot find " + defaultPath + defaultFileName)
 		var config = Config{
 			Apiserver: "",
 			Username:  "",
@@ -53,14 +53,14 @@ func init() {
 
 		configInJSON, err := json.Marshal(config)
 		if err != nil {
-			logrus.Fatal("Failing encoding config")
+			logrus.Fatal("Failure: cannot encode config")
 			fmt.Println(err)
 		}
 
 		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
-			logrus.Fatal("Failing to wirte configure into " + defaultPath + defaultFileName)
+			logrus.Fatal("Failure: cannot wirte configure into " + defaultPath + defaultFileName)
 			fmt.Println(err)
 		} else {
 			logrus.Info("Creating " + defaultPath + defaultFileName)
@@ -76,8 +76,8 @@ func createPath() {
 		err = os.Mkdir(defaultPath, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
-			logrus.Fatal("Failing creating dir: " + defaultPath)
+			logrus.Fatal("Failure: mkdir: " + defaultPath)
 		}
-		logrus.Info("Creating dir: " + defaultPath)
+		logrus.Info("Success: mkdir: " + defaultPath)
 	}
 }

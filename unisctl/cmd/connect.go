@@ -36,7 +36,7 @@ var connectCmd = &cobra.Command{
 				serverIP = serverIP + ":9898"
 			}
 		}
-		logrus.Info("Connect to " + serverIP)
+		logrus.Info("Connecting to " + serverIP)
 
 		//connect to unis-apiserver
 		resp, err := http.Get(serverIP)
@@ -50,7 +50,7 @@ var connectCmd = &cobra.Command{
 				if string(body) == "OK" {
 					fmt.Println("Success to connect unis-apiserver!")
 				} else {
-					logrus.Fatal("Getting bad response!")
+					logrus.Fatal("Failure: cannot get bad response!")
 				}
 			}
 		}
@@ -60,16 +60,16 @@ var connectCmd = &cobra.Command{
 		var config Config
 		err = json.Unmarshal(configInJSON, &config)
 		if err != nil {
-			logrus.Fatal("Failing decoding configure.json")
+			logrus.Fatal("Failure: cannot decode configure.json")
 		}
 		config.Apiserver = serverIP
 		configInJSON, err = json.Marshal(config)
 		if err != nil {
-			logrus.Fatal("Failing encoding configure.json")
+			logrus.Fatal("Failure: cannot encode configure.json")
 		}
 		err = ioutil.WriteFile(defaultPath+defaultFileName, configInJSON, os.ModePerm)
 		if err != nil {
-			logrus.Fatal("Failing writing into " + defaultPath + defaultFileName)
+			logrus.Fatal("Failure: cannot write into " + defaultPath + defaultFileName)
 		}
 	},
 }
