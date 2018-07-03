@@ -19,6 +19,8 @@ type Config struct {
 	Password  string `json:"password"`
 }
 
+var ConfigContent Config
+
 var rootCmd = &cobra.Command{
 	Use:   "unisctl",
 	Short: "A client to communicate with unis-apiserver",
@@ -44,15 +46,13 @@ func init() {
 	// create configure.json
 	_, err := ioutil.ReadFile(defaultPath + defaultFileName)
 	if err != nil {
-		var config = Config{
-			Apiserver: "",
-			Username:  "",
-			Password:  "",
-		}
+		ConfigContent.Apiserver = ""
+		ConfigContent.Username = ""
+		ConfigContent.Password = ""
 
-		configInJSON, err := json.Marshal(config)
+		configInJSON, err := json.Marshal(ConfigContent)
 		if err != nil {
-			logrus.Fatal("Failure: cannot encode config")
+			logrus.Fatal("Failure: cannot encode configure")
 			fmt.Println(err)
 		}
 
@@ -65,6 +65,11 @@ func init() {
 			logrus.Info("Creating " + defaultPath + defaultFileName)
 		}
 	} else {
+		configInJSON, err := ioutil.ReadFile(defaultPath + defaultFileName)
+		err = json.Unmarshal(configInJSON, &ConfigContent)
+		if err != nil {
+			logrus.Fatal("Failure: cannot decode configure.json")
+		}
 		logrus.Info("Reading from " + defaultPath + defaultFileName)
 	}
 }

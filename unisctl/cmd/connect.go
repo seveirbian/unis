@@ -56,14 +56,8 @@ var connectCmd = &cobra.Command{
 		}
 
 		//update configure.json
-		configInJSON, err := ioutil.ReadFile(defaultPath + defaultFileName)
-		var config Config
-		err = json.Unmarshal(configInJSON, &config)
-		if err != nil {
-			logrus.Fatal("Failure: cannot decode configure.json")
-		}
-		config.Apiserver = serverIP
-		configInJSON, err = json.Marshal(config)
+		ConfigContent.Apiserver = serverIP
+		configInJSON, err := json.Marshal(ConfigContent)
 		if err != nil {
 			logrus.Fatal("Failure: cannot encode configure.json")
 		}
