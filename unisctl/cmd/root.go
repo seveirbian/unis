@@ -44,7 +44,6 @@ func init() {
 	// create configure.json
 	_, err := ioutil.ReadFile(defaultPath + defaultFileName)
 	if err != nil {
-		logrus.Info("Failure: cannot find " + defaultPath + defaultFileName)
 		var config = Config{
 			Apiserver: "",
 			Username:  "",
