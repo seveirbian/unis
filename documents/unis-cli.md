@@ -18,7 +18,6 @@ Commands:
   rmi        Remove one or more images in remote registry  
   run        Run a container on a edge node  
   signin     Sign in  
-  signup     Sign up a new account  
   stats      Display the status of all components of unis  
   stop       Stop one or more running containers  
   tag        Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE  
