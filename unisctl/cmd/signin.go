@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -28,7 +27,7 @@ var signinCmd = &cobra.Command{
 	Long:  "Sign in",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp, err := http.PostForm(ConfigContent.Apiserver+"/users.json", url.Values{"username": {siUsername}, "password": {siPassword}})
+		resp, err := http.Get(ConfigContent.Apiserver + "/users.json" + "/" + siUsername + "/" + siPassword)
 		if err != nil {
 			logrus.Fatal(err)
 		} else {

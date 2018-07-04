@@ -30,6 +30,14 @@ type userInfo struct {
 	Password string `json:"password"`
 }
 
+type ImageInfo struct {
+	Repository string
+	Tag        string
+	ImageID    string
+	Created    string
+	Size       string
+}
+
 var UsersInfo []userInfo
 
 var serverFilePath = ServerFilePath{
@@ -103,7 +111,7 @@ func (serverFilePath ServerFilePath) readUsersJSON() error {
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		UsersInfo = append(UsersInfo, userInfo{Username: "admin", Password: "admin"})
+		// UsersInfo = append(UsersInfo, userInfo{Username: "admin", Password: "admin"})
 		UsersInfoInJSON, err := json.Marshal(UsersInfo)
 		if err != nil {
 			logrus.Fatal(err)
@@ -131,7 +139,12 @@ func (rqHandler Handler) Serve(serveIP string) error {
 	//serve "unisctl connect" command
 	server.GET("/", handleConnect)
 	//serve "unisctl signin" command
-	server.POST("/users.json", handleSignin)
+	server.GET("/users.json/:username/:password", handleSignin)
+	//serve "unisctl signup" command
+	server.POST("/users.json", handleSignup)
+	//serve "unisctl images" command
+	server.POST("/images/:username/images", handlePrivateImages)
+	// server.POST("/images/public/images", handlePublicImages)
 
 	// Run request-handler, this should never exit
 	return server.Start(serveIP)
@@ -143,11 +156,60 @@ func handleConnect(c echo.Context) error {
 }
 
 func handleSignin(c echo.Context) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+	username := c.Param("username")
+	password := c.Param("password")
 	for _, user := range UsersInfo {
 		if user.Username == username && user.Password == password {
 			return c.String(http.StatusOK, "Signin succeeded")
+		}
+	}
+	return c.String(http.StatusUnauthorized, "incorrect username of password")
+}
+
+func handleSignup(c echo.Context) error {
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+	//detect whether username has existed
+	for _, user := range UsersInfo {
+		if user.Username == username {
+			return c.String(http.StatusConflict, "Username has existed")
+		}
+	}
+	//add new account into user.json
+	UsersInfo = append(UsersInfo, userInfo{Username: username, Password: password})
+	UsersInfoInJSON, err := json.Marshal(UsersInfo)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	err = ioutil.WriteFile(serverFilePath.UsersJSONPath+"/users.json", UsersInfoInJSON, os.ModePerm)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	//create new account folder and info file
+	err = os.Mkdir(serverFilePath.ImagesPath+"/"+username, os.ModePerm)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	imagesInfo := []ImageInfo{}
+	imagesInfoInJSON, err := json.Marshal(imagesInfo)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	os.Create(serverFilePath.ImagesPath + "/" + username + "/" + username + ".json")
+	err = ioutil.WriteFile(serverFilePath.ImagesPath+"/"+username+"/"+username+".json", imagesInfoInJSON, os.ModePerm)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	return c.String(http.StatusOK, "New account has created")
+}
+
+func handlePrivateImages(c echo.Context) error {
+	username := c.Param("username")
+	password := c.FormValue("password")
+	for _, user := range UsersInfo {
+		if user.Username == username && user.Password == password {
+			return c.String(http.StatusOK, "")
 		}
 	}
 	return c.String(http.StatusUnauthorized, "incorrect username of password")
