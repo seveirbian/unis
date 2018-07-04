@@ -2,7 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	
+	"io/ioutil"
+	"net/http"
+	"net/url"
+
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -16,17 +20,44 @@ Options:
 var allImagesFlag bool
 
 var imagesCmd = &cobra.Command{
-	Use:   "images", 
-	Short: "List images in remote registry", 
-	Long:  "List images in remote registry", 
-	Args: cobra.NoArgs, 
+	Use:   "images",
+	Short: "List images in remote registry",
+	Long:  "List images in remote registry",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		if allImagesFlag {
-			fmt.Println(allImagesFlag)
-		}else {
-			fmt.Println(allImagesFlag)
+		//detect whether user has signed in
+		if ConfigContent.Username == "" || ConfigContent.Password == "" {
+			fmt.Println("Please signin first!")
+			logrus.Fatal("Please signin first!")
 		}
-	}, 
+		//send different request based on allImagesFlag
+		var resp *http.Response
+		var err error
+		if allImagesFlag {
+			resp, err = http.PostForm(ConfigContent.Apiserver+"/images/public/images", url.Values{"username": {ConfigContent.Username}, "password": {ConfigContent.Password}})
+		} else {
+			resp, err = http.PostForm(ConfigContent.Apiserver+"/images/"+ConfigContent.Username+"/images", url.Values{"password": {ConfigContent.Password}})
+		}
+
+		//print response
+		if err != nil {
+			logrus.Fatal(err)
+		} else {
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				logrus.Fatal(err)
+			} else {
+				var label = ""
+				label += "Repository          "
+				label += "Tag          "
+				label += "Image Id          "
+				label += "Created          "
+				label += "Size          "
+				fmt.Println(label)
+				fmt.Println(string(body))
+			}
+		}
+	},
 }
 
 func init() {

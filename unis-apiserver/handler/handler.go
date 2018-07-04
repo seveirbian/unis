@@ -84,6 +84,19 @@ func (serverFilePath ServerFilePath) createFilePath() error {
 			logrus.Fatal(err)
 		}
 	}
+	_, err = os.Create(serverFilePath.ImagesPublicPath + "imagesInfo.json")
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	publicImagesInfo := []ImageInfo{}
+	publicImagesInfoInJSON, err := json.Marshal(publicImagesInfo)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	err = ioutil.WriteFile(serverFilePath.ImagesPublicPath+"imagesInfo.json", publicImagesInfoInJSON, os.ModePerm)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 
 	_, err = os.Stat(serverFilePath.NodesPath)
 	if err != nil {
@@ -144,7 +157,7 @@ func (rqHandler Handler) Serve(serveIP string) error {
 	server.POST("/users.json", handleSignup)
 	//serve "unisctl images" command
 	server.POST("/images/:username/images", handlePrivateImages)
-	// server.POST("/images/public/images", handlePublicImages)
+	server.POST("/images/public/images", handlePublicImages)
 
 	// Run request-handler, this should never exit
 	return server.Start(serveIP)
@@ -163,7 +176,7 @@ func handleSignin(c echo.Context) error {
 			return c.String(http.StatusOK, "Signin succeeded")
 		}
 	}
-	return c.String(http.StatusUnauthorized, "incorrect username of password")
+	return c.String(http.StatusUnauthorized, "incorrect username or password")
 }
 
 func handleSignup(c echo.Context) error {
@@ -195,8 +208,8 @@ func handleSignup(c echo.Context) error {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	os.Create(serverFilePath.ImagesPath + "/" + username + "/" + username + ".json")
-	err = ioutil.WriteFile(serverFilePath.ImagesPath+"/"+username+"/"+username+".json", imagesInfoInJSON, os.ModePerm)
+	os.Create(serverFilePath.ImagesPath + "/" + username + "/" + "imagesInfo.json")
+	err = ioutil.WriteFile(serverFilePath.ImagesPath+"/"+username+"/"+"imagesInfo.json", imagesInfoInJSON, os.ModePerm)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -208,9 +221,97 @@ func handlePrivateImages(c echo.Context) error {
 	username := c.Param("username")
 	password := c.FormValue("password")
 	for _, user := range UsersInfo {
+		//judge whether account is valid
 		if user.Username == username && user.Password == password {
-			return c.String(http.StatusOK, "")
+			//get user's imagesInfo
+			imagesInfoInJSON, err := ioutil.ReadFile(serverFilePath.ImagesPath + "/" + username + "/imagesInfo.json")
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			var imagesInfo []ImageInfo
+			err = json.Unmarshal(imagesInfoInJSON, &imagesInfo)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			//generate response body
+			var bodyContent = ""
+			var blank = "          "
+			for _, image := range imagesInfo {
+				bodyContent += image.Repository
+				bodyContent += blank
+				bodyContent += image.Tag
+				bodyContent += blank
+				bodyContent += image.ImageID
+				bodyContent += blank
+				bodyContent += image.Created
+				bodyContent += blank
+				bodyContent += image.Size
+				bodyContent += blank
+				bodyContent += "\n"
+			}
+			return c.String(http.StatusOK, bodyContent)
 		}
 	}
-	return c.String(http.StatusUnauthorized, "incorrect username of password")
+	return c.String(http.StatusUnauthorized, "incorrect username or password")
+}
+
+func handlePublicImages(c echo.Context) error {
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+	for _, user := range UsersInfo {
+		if user.Username == username && user.Password == password {
+			//get public images info
+			publicImagesInfoInJSON, err := ioutil.ReadFile(serverFilePath.ImagesPublicPath + "imagesInfo.json")
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			var publicImagesInfo []ImageInfo
+			err = json.Unmarshal(publicImagesInfoInJSON, &publicImagesInfo)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			//get private images info
+			privateImagesInfoInJSON, err := ioutil.ReadFile(serverFilePath.ImagesPath + "/" + username + "/imagesInfo.json")
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			var privateImagesInfo []ImageInfo
+			err = json.Unmarshal(privateImagesInfoInJSON, &privateImagesInfo)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+
+			//generate response body
+			var bodyContent = ""
+			var blank = "          "
+			for _, image := range publicImagesInfo {
+				bodyContent += image.Repository
+				bodyContent += blank
+				bodyContent += image.Tag
+				bodyContent += blank
+				bodyContent += image.ImageID
+				bodyContent += blank
+				bodyContent += image.Created
+				bodyContent += blank
+				bodyContent += image.Size
+				bodyContent += blank
+				bodyContent += "\n"
+			}
+			for _, image := range privateImagesInfo {
+				bodyContent += image.Repository
+				bodyContent += blank
+				bodyContent += image.Tag
+				bodyContent += blank
+				bodyContent += image.ImageID
+				bodyContent += blank
+				bodyContent += image.Created
+				bodyContent += blank
+				bodyContent += image.Size
+				bodyContent += blank
+				bodyContent += "\n"
+			}
+			return c.String(http.StatusOK, bodyContent)
+		}
+	}
+	return c.String(http.StatusUnauthorized, "incorrect username or password")
 }
