@@ -15,11 +15,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var pushUsage = `Usage:  unisctl push [OPTIONS] NAME[:TAG]
+var pushUsage = `Usage:  unisctl push [OPTIONS] /PATH/IAMGE[:TAG]
 
 Options:
   -f, --configure-file  Add configure file with image
   -h, --help            help for push
+  -p, --public-image    Push an image as a public one
+  -t, --type            Point out type of image, like(docker or unikernel)
 `
 
 var cfgFile string
@@ -90,50 +92,52 @@ var pushCmd = &cobra.Command{
 		var repository string
 
 		//generate created
-		var created = string(time.Now().Format("2006-01-02 15:04:05"))
+		var created = string(time.Now().Format("2006-01-02"))
 
 		if pushPublicFlag {
 			//push public image
 			repository = "public"
-
-			//generate arguments
-			args0 := "curl"
-			args1 := "-F"
-			args2 := "username=" + ConfigContent.Username
-			args3 := "-F"
-			args4 := "password=" + ConfigContent.Password
-			args5 := "-F"
-			args6 := "repository=" + repository
-			args7 := "-F"
-			args8 := "tag=" + tag
-			args9 := "-F"
-			args10 := "imageID=" + imageID
-			args11 := "-F"
-			args12 := "created=" + created
-			args13 := "-F"
-			args14 := "size=" + size
-			args15 := "-F"
-			args16 := "imageType=" + imageType
-			args17 := "-F"
-			args18 := image + "=@" + path
-			args19 := ConfigContent.Apiserver + "/images/public/" + image
-
-			//execute curl to push image
-			child := exec.Command(args0, args1, args2, args3, args4,
-				args5, args6, args7, args8, args9, args10, args11,
-				args12, args13, args14, args15, args16, args17,
-				args18, args19)
-
-			output, err := child.Output()
-			if err != nil {
-				logrus.Fatal(err)
-			}
-
-			fmt.Println(string(output))
 		} else {
 			//push private image
 			repository = ConfigContent.Username
 		}
+
+		//generate arguments
+		args0 := "curl"
+		args1 := "-F"
+		args2 := "username=" + ConfigContent.Username
+		args3 := "-F"
+		args4 := "password=" + ConfigContent.Password
+		args5 := "-F"
+		args6 := "repository=" + repository
+		args7 := "-F"
+		args8 := "tag=" + tag
+		args9 := "-F"
+		args10 := "imageID=" + imageID
+		args11 := "-F"
+		args12 := "created=" + created
+		args13 := "-F"
+		args14 := "size=" + size
+		args15 := "-F"
+		args16 := "imageType=" + imageType
+		args17 := "-F"
+		args18 := "owner=" + ConfigContent.Username
+		args19 := "-F"
+		args20 := image + "=@" + path
+		args21 := ConfigContent.Apiserver + "/images/" + repository + "/" + image
+
+		//execute curl to push image
+		child := exec.Command(args0, args1, args2, args3, args4,
+			args5, args6, args7, args8, args9, args10, args11,
+			args12, args13, args14, args15, args16, args17,
+			args18, args19, args20, args21)
+
+		output, err := child.Output()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		fmt.Println(string(output))
 	},
 }
 

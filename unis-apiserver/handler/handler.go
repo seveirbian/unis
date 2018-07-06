@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"strings"
 
 	// "fmt"
 	"net/http"
@@ -38,6 +39,7 @@ type ImageInfo struct {
 	Created    string
 	Size       string
 	Type       string
+	Owner      string
 }
 
 var UsersInfo []userInfo
@@ -242,20 +244,36 @@ func handlePrivateImages(c echo.Context) error {
 		}
 		//generate response body
 		var bodyContent = ""
-		var blank = "          "
+		var blankLenth = 10
 		for _, image := range imagesInfo {
 			bodyContent += image.Repository
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Repository", "") +
+				blankLenth - strings.Count(image.Repository, ""))
+
 			bodyContent += image.Tag
-			bodyContent += blank
-			bodyContent += image.ImageID
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Tag", "") +
+				blankLenth - strings.Count(image.Tag, ""))
+
+			bodyContent += Substring(image.ImageID, 0, 10)
+			bodyContent += EmptyString(strings.Count("Image ID", "") +
+				blankLenth - strings.Count(Substring(image.ImageID, 0, 10), ""))
+
 			bodyContent += image.Created
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Created", "") +
+				blankLenth - strings.Count(image.Created, ""))
+
 			bodyContent += image.Size
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Size", "") +
+				blankLenth - strings.Count(image.Size, ""))
+
 			bodyContent += image.Type
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Type", "") +
+				blankLenth - strings.Count(image.Type, ""))
+
+			bodyContent += image.Owner
+			bodyContent += EmptyString(strings.Count("Owner", "") +
+				blankLenth - strings.Count(image.Owner, ""))
+
 			bodyContent += "\n"
 		}
 		return c.String(http.StatusOK, bodyContent)
@@ -290,35 +308,67 @@ func handlePublicImages(c echo.Context) error {
 
 		//generate response body
 		var bodyContent = ""
-		var blank = "          "
+		var blankLenth = 10
 		for _, image := range publicImagesInfo {
 			bodyContent += image.Repository
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Repository", "") +
+				blankLenth - strings.Count(image.Repository, ""))
+
 			bodyContent += image.Tag
-			bodyContent += blank
-			bodyContent += image.ImageID
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Tag", "") +
+				blankLenth - strings.Count(image.Tag, ""))
+
+			bodyContent += Substring(image.ImageID, 0, 10)
+			bodyContent += EmptyString(strings.Count("Image ID", "") +
+				blankLenth - strings.Count(Substring(image.ImageID, 0, 10), ""))
+
 			bodyContent += image.Created
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Created", "") +
+				blankLenth - strings.Count(image.Created, ""))
+
 			bodyContent += image.Size
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Size", "") +
+				blankLenth - strings.Count(image.Size, ""))
+
 			bodyContent += image.Type
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Type", "") +
+				blankLenth - strings.Count(image.Type, ""))
+
+			bodyContent += image.Owner
+			bodyContent += EmptyString(strings.Count("Owner", "") +
+				blankLenth - strings.Count(image.Owner, ""))
+
 			bodyContent += "\n"
 		}
 		for _, image := range privateImagesInfo {
 			bodyContent += image.Repository
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Repository", "") +
+				blankLenth - strings.Count(image.Repository, ""))
+
 			bodyContent += image.Tag
-			bodyContent += blank
-			bodyContent += image.ImageID
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Tag", "") +
+				blankLenth - strings.Count(image.Tag, ""))
+
+			bodyContent += Substring(image.ImageID, 0, 10)
+			bodyContent += EmptyString(strings.Count("Image ID", "") +
+				blankLenth - strings.Count(Substring(image.ImageID, 0, 10), ""))
+
 			bodyContent += image.Created
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Created", "") +
+				blankLenth - strings.Count(image.Created, ""))
+
 			bodyContent += image.Size
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Size", "") +
+				blankLenth - strings.Count(image.Size, ""))
+
 			bodyContent += image.Type
-			bodyContent += blank
+			bodyContent += EmptyString(strings.Count("Type", "") +
+				blankLenth - strings.Count(image.Type, ""))
+
+			bodyContent += image.Owner
+			bodyContent += EmptyString(strings.Count("Owner", "") +
+				blankLenth - strings.Count(image.Owner, ""))
+
 			bodyContent += "\n"
 		}
 		return c.String(http.StatusOK, bodyContent)
@@ -338,6 +388,7 @@ func handlePublicPush(c echo.Context) error {
 	created := c.FormValue("created")
 	size := c.FormValue("size")
 	imageType := c.FormValue("imageType")
+	owner := c.FormValue("owner")
 
 	if validateUser(username, password) {
 		var imagesInfo []ImageInfo
@@ -366,6 +417,7 @@ func handlePublicPush(c echo.Context) error {
 			Created:    created,
 			Size:       size,
 			Type:       imageType,
+			Owner:      owner,
 		})
 
 		imagesInfoInJSON, err = json.Marshal(imagesInfo)
@@ -408,5 +460,84 @@ func handlePublicPush(c echo.Context) error {
 }
 
 func handlePrivatePush(c echo.Context) error {
-	return c.String(http.StatusOK, "ok")
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+
+	imagename := c.Param("imagename")
+
+	repository := c.FormValue("repository") + "/" + imagename
+	tag := c.FormValue("tag")
+	imageID := c.FormValue("imageID")
+	created := c.FormValue("created")
+	size := c.FormValue("size")
+	imageType := c.FormValue("imageType")
+	owner := c.FormValue("owner")
+
+	if validateUser(username, password) {
+		var imagesInfo []ImageInfo
+		imagesInfoInJSON, err := ioutil.ReadFile(serverFilePath.ImagesPath + username + "/" + "imagesInfo.json")
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		err = json.Unmarshal(imagesInfoInJSON, &imagesInfo)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		//detect whether image has existed
+		for _, imageInfo := range imagesInfo {
+			if imageInfo.Repository == (repository) && imageInfo.Tag == tag {
+				return c.String(http.StatusForbidden, "image already exists")
+			}
+		}
+
+		//make change to imagesInfo.json
+		imagesInfo = append(imagesInfo, ImageInfo{
+			Repository: repository,
+			Tag:        tag,
+			ImageID:    imageID,
+			Created:    created,
+			Size:       size,
+			Type:       imageType,
+			Owner:      owner,
+		})
+
+		imagesInfoInJSON, err = json.Marshal(imagesInfo)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		err = ioutil.WriteFile(serverFilePath.ImagesPath+username+"/"+"imagesInfo.json", imagesInfoInJSON, os.ModePerm)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		//transimit image
+		imagefile, err := c.FormFile(imagename)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		src, err := imagefile.Open()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer src.Close()
+
+		dst, err := os.Create(serverFilePath.ImagesPath + username + "/" + imagename)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer dst.Close()
+
+		_, err = io.Copy(dst, src)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		return c.String(http.StatusOK, "image pushed")
+	} else {
+		return c.String(http.StatusUnauthorized, "incorrect username or password")
+	}
 }

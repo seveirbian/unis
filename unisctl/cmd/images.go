@@ -48,11 +48,13 @@ var imagesCmd = &cobra.Command{
 				logrus.Fatal(err)
 			} else {
 				var label = ""
-				label += "Repository          "
-				label += "Tag          "
-				label += "Image Id          "
-				label += "Created          "
-				label += "Size          "
+				label += "REPOSITORY          "
+				label += "TAG          "
+				label += "IMAGE ID          "
+				label += "CREATED          "
+				label += "SIZE          "
+				label += "TYPE          "
+				label += "OWNER          "
 				fmt.Println(label)
 				fmt.Println(string(body))
 			}

@@ -18,7 +18,7 @@ Node management:
 Public nodes:
 apiserverIP:PORT/nodes/public/nodes  
 apiserverIP:PORT/nodes/public/{nodeID}  
-Private images:
+Private nodes:
 apiserverIP:PORT/nodes/{username}/nodes  
 apiserverIP:PORT/nodes/{username}/{nodeID}  
 

@@ -76,13 +76,15 @@ Options:
 
 ## unisctl push --help
 
-Usage: unisctl push [OPTIONS] NAME[:TAG]
+Usage: unisctl push [OPTIONS] /PATH/IMAGE[:TAG]
 
 Push an image to a registry.
 
 Options:
       --help             Print usage
   -f, --configure-file   Add configure file with image
+  -p, --public-image     Push an image as a public one
+  -t, --type             Point out type of image, like (docker or unikernel)
 
 ## unisctl rmi --help
 
@@ -92,6 +94,7 @@ Remove one or more images
 
 Options:
       --help              Print usage
+  -p, --public            Remove public images (default private images)
 
 ## unisctl run --help
 
