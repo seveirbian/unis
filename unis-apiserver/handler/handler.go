@@ -43,7 +43,7 @@ var serverFilePath = ServerFilePath{
 	RootPath:         os.Getenv("HOME") + "/.unis/apiserver/",
 	ImagesPath:       os.Getenv("HOME") + "/.unis/apiserver/images/",
 	NodesPath:        os.Getenv("HOME") + "/.unis/apiserver/nodes/",
-	ImagesPublicPath: os.Getenv("HOME") + "/.unis/apiserver/images/public/",
+	ImagesPublicPath: os.Getenv("HOME") + "/.unis/apiserver//",
 	NodesPublicPath:  os.Getenv("HOME") + "/.unis/apiserver/nodes/public/",
 	UsersJSONPath:    os.Getenv("HOME") + "/.unis/apiserver/",
 }
@@ -78,7 +78,8 @@ func (rqHandler Handler) Serve(serveIP string) error {
 	server.POST("/images/remove/public/:imageID", handlePublicRmi)
 	server.POST("/images/remove/:username/:imageID", handlePrivateRmi)
 	// //serve "unisctl tag" command
-	// server.POST("/images/public/:oldimage/:newimage", handleTag)
+	server.POST("/images/tag/public/:oldimage/:oldtag/:newimage/:newtag", handlePublicTag)
+	server.POST("/images/tag/:username/:oldimage/:oldtag/:newimage/:newtag", handlePrivateTag)
 	// //serve "unisctl run" command
 	// server.POST()
 	// //serve "unisctl stop" command

@@ -11,8 +11,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func handlePublicRmi(c echo.Context) error {
-	imageID := c.Param("imageID")
+func handlePublicTag(c echo.Context) error {
+	oldImageName := c.Param("oldimage")
+	oldTag := c.Param("oldtag")
+	newImageName := c.Param("newimage")
+	newTag := c.Param("newtag")
+
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
@@ -28,16 +32,18 @@ func handlePublicRmi(c echo.Context) error {
 			logrus.Fatal(err)
 		}
 
-		// get the image that to be removed
-		for index, imageinfo := range publicImagesInfo {
-			if strings.Contains(imageinfo.ImageID, imageID) && imageinfo.Owner == username {
-				// delete the image file
-				err := os.Remove(serverFilePath.ImagesPublicPath + imageinfo.ImageID)
-				if err != nil {
-					logrus.Fatal(err)
+		// change images info
+		for index, image := range publicImagesInfo {
+			if strings.Split(image.Repository, "/")[1] == oldImageName && image.Tag == oldTag && image.Owner == username {
+				for _, imageRef := range publicImagesInfo {
+					if strings.Split(imageRef.Repository, "/")[1] == newImageName && imageRef.Tag == newTag {
+						return c.String(http.StatusForbidden, "TARGET_SOURCE:[TAG] has existed")
+					}
 				}
-				// delete the image info
-				publicImagesInfo = append(publicImagesInfo[:index], publicImagesInfo[index+1:]...)
+
+				publicImagesInfo[index].Repository = "public/" + newImageName
+				publicImagesInfo[index].Tag = newTag
+
 				// write public images info back
 				publicImagesInfoInJSON, err = json.Marshal(publicImagesInfo)
 				if err != nil {
@@ -49,15 +55,19 @@ func handlePublicRmi(c echo.Context) error {
 					logrus.Fatal(err)
 				}
 
-				return c.String(http.StatusOK, imageID+" removed")
+				return c.String(http.StatusOK, "Tag succeeded")
 			}
 		}
 	}
-	return c.String(http.StatusNotFound, "Wrong imageID or You are unauthorized")
+	return c.String(http.StatusForbidden, "Wrong IMAGE:[TAG] or You are unauthorized")
 }
 
-func handlePrivateRmi(c echo.Context) error {
-	imageID := c.Param("imageID")
+func handlePrivateTag(c echo.Context) error {
+	oldImageName := c.Param("oldimage")
+	oldTag := c.Param("oldtag")
+	newImageName := c.Param("newimage")
+	newTag := c.Param("newtag")
+
 	username := c.Param("username")
 	password := c.FormValue("password")
 
@@ -73,16 +83,18 @@ func handlePrivateRmi(c echo.Context) error {
 			logrus.Fatal(err)
 		}
 
-		// get the image that to be removed
-		for index, imageinfo := range privateImagesInfo {
-			if strings.Contains(imageinfo.ImageID, imageID) && imageinfo.Owner == username {
-				// delete the image file
-				err := os.Remove(serverFilePath.ImagesPath + username + "/" + imageinfo.ImageID)
-				if err != nil {
-					logrus.Fatal(err)
+		// change images info
+		for index, image := range privateImagesInfo {
+			if strings.Split(image.Repository, "/")[1] == oldImageName && image.Tag == oldTag && image.Owner == username {
+				for _, imageRef := range privateImagesInfo {
+					if strings.Split(imageRef.Repository, "/")[1] == newImageName && imageRef.Tag == newTag {
+						return c.String(http.StatusForbidden, "TARGET_SOURCE:[TAG] has existed")
+					}
 				}
-				// delete the image info
-				privateImagesInfo = append(privateImagesInfo[:index], privateImagesInfo[index+1:]...)
+
+				privateImagesInfo[index].Repository = username + "/" + newImageName
+				privateImagesInfo[index].Tag = newTag
+
 				// write private images info back
 				privateImagesInfoInJSON, err = json.Marshal(privateImagesInfo)
 				if err != nil {
@@ -94,9 +106,9 @@ func handlePrivateRmi(c echo.Context) error {
 					logrus.Fatal(err)
 				}
 
-				return c.String(http.StatusOK, imageID+" removed")
+				return c.String(http.StatusOK, "Tag succeeded")
 			}
 		}
 	}
-	return c.String(http.StatusNotFound, "Wrong imageID or You are unauthorized")
+	return c.String(http.StatusForbidden, "Wrong IMAGE:[TAG] or You are unauthorized")
 }
