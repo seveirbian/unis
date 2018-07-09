@@ -25,12 +25,12 @@ var imagesCmd = &cobra.Command{
 	Long:  "List images in remote registry",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		//detect whether user has signed in
+		// detect whether user has signed in
 		if ConfigContent.Username == "" || ConfigContent.Password == "" {
 			fmt.Println("Please signin first!")
 			logrus.Fatal("Please signin first!")
 		}
-		//send different request based on allImagesFlag
+		// send different request based on allImagesFlag
 		var resp *http.Response
 		var err error
 		if allImagesFlag {
@@ -39,7 +39,7 @@ var imagesCmd = &cobra.Command{
 			resp, err = http.PostForm(ConfigContent.Apiserver+"/images/show/"+ConfigContent.Username+"/images", url.Values{"password": {ConfigContent.Password}})
 		}
 
-		//print response
+		// print response
 		if err != nil {
 			logrus.Fatal(err)
 		} else {
