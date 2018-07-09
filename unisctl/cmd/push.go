@@ -124,7 +124,7 @@ var pushCmd = &cobra.Command{
 		args18 := "owner=" + ConfigContent.Username
 		args19 := "-F"
 		args20 := image + "=@" + path
-		args21 := ConfigContent.Apiserver + "/images/" + repository + "/" + image
+		args21 := ConfigContent.Apiserver + "/images/push/" + repository + "/" + image
 
 		//execute curl to push image
 		child := exec.Command(args0, args1, args2, args3, args4,

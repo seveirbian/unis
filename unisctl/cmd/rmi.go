@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +17,7 @@ var rmiCmd = &cobra.Command{
 	Long:  "remobe one or more images in registry",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("rmi")
-		fmt.Println(args)
+		// http.Post()
 	},
 }
 

@@ -34,9 +34,9 @@ var imagesCmd = &cobra.Command{
 		var resp *http.Response
 		var err error
 		if allImagesFlag {
-			resp, err = http.PostForm(ConfigContent.Apiserver+"/images/public/images", url.Values{"username": {ConfigContent.Username}, "password": {ConfigContent.Password}})
+			resp, err = http.PostForm(ConfigContent.Apiserver+"/images/show/public/images", url.Values{"username": {ConfigContent.Username}, "password": {ConfigContent.Password}})
 		} else {
-			resp, err = http.PostForm(ConfigContent.Apiserver+"/images/"+ConfigContent.Username+"/images", url.Values{"password": {ConfigContent.Password}})
+			resp, err = http.PostForm(ConfigContent.Apiserver+"/images/show/"+ConfigContent.Username+"/images", url.Values{"password": {ConfigContent.Password}})
 		}
 
 		//print response

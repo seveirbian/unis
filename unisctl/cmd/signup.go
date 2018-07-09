@@ -26,7 +26,7 @@ var signupCmd = &cobra.Command{
 	Long:  "Sign up",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp, err := http.PostForm(ConfigContent.Apiserver+"/users.json", url.Values{"username": {suUsername}, "password": {suPassword}})
+		resp, err := http.PostForm(ConfigContent.Apiserver+"/users/signup", url.Values{"username": {suUsername}, "password": {suPassword}})
 		if err != nil {
 			logrus.Fatal(err)
 		} else {
