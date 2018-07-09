@@ -24,7 +24,7 @@ var connectCmd = &cobra.Command{
 	Long:  "Connect to unis-apiserver",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		//get unis-apiserver's IP
+		// get unis-apiserver's IP
 		serverIP := args[0]
 		if !strings.HasPrefix(serverIP, "http://") {
 			serverIP = "http://" + serverIP
@@ -33,7 +33,7 @@ var connectCmd = &cobra.Command{
 			}
 		}
 
-		//connect to unis-apiserver
+		// connect to unis-apiserver
 		resp, err := http.Get(serverIP)
 		if err != nil {
 			logrus.Fatal(err)
@@ -50,7 +50,7 @@ var connectCmd = &cobra.Command{
 			}
 		}
 
-		//update configure.json
+		// update configure.json
 		ConfigContent.Apiserver = serverIP
 		configInJSON, err := json.Marshal(ConfigContent)
 		if err != nil {

@@ -8,5 +8,6 @@
 
 {  
     "api-server": "http://localhost:9898", 
-    
+    "username":"admin",
+    "password":"admin",
 }
