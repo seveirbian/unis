@@ -44,28 +44,7 @@ func handlePublicPush(c echo.Context) error {
 			}
 		}
 
-		//make change to imagesInfo.json
-		imagesInfo = append(imagesInfo, ImageInfo{
-			Repository: repository,
-			Tag:        tag,
-			ImageID:    imageID,
-			Created:    created,
-			Size:       size,
-			Type:       imageType,
-			Owner:      owner,
-		})
-
-		imagesInfoInJSON, err = json.Marshal(imagesInfo)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-
-		err = ioutil.WriteFile(serverFilePath.ImagesPublicPath+"imagesInfo.json", imagesInfoInJSON, os.ModePerm)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-
-		//transimit image
+		// transimit image
 		imagefile, err := c.FormFile(imagename)
 		if err != nil {
 			logrus.Fatal(err)
@@ -84,6 +63,33 @@ func handlePublicPush(c echo.Context) error {
 		defer dst.Close()
 
 		_, err = io.Copy(dst, src)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		// use imageID as file name
+		err = os.Rename(serverFilePath.ImagesPublicPath+imagename, serverFilePath.ImagesPublicPath+imageID)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		// make change to imagesInfo.json
+		imagesInfo = append(imagesInfo, ImageInfo{
+			Repository: repository,
+			Tag:        tag,
+			ImageID:    imageID,
+			Created:    created,
+			Size:       size,
+			Type:       imageType,
+			Owner:      owner,
+		})
+
+		imagesInfoInJSON, err = json.Marshal(imagesInfo)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		err = ioutil.WriteFile(serverFilePath.ImagesPublicPath+"imagesInfo.json", imagesInfoInJSON, os.ModePerm)
 		if err != nil {
 			logrus.Fatal(err)
 		}
@@ -120,35 +126,14 @@ func handlePrivatePush(c echo.Context) error {
 			logrus.Fatal(err)
 		}
 
-		//detect whether image has existed
+		// detect whether image has existed
 		for _, imageInfo := range imagesInfo {
 			if imageInfo.Repository == (repository) && imageInfo.Tag == tag {
 				return c.String(http.StatusForbidden, "image already exists")
 			}
 		}
 
-		//make change to imagesInfo.json
-		imagesInfo = append(imagesInfo, ImageInfo{
-			Repository: repository,
-			Tag:        tag,
-			ImageID:    imageID,
-			Created:    created,
-			Size:       size,
-			Type:       imageType,
-			Owner:      owner,
-		})
-
-		imagesInfoInJSON, err = json.Marshal(imagesInfo)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-
-		err = ioutil.WriteFile(serverFilePath.ImagesPath+username+"/"+"imagesInfo.json", imagesInfoInJSON, os.ModePerm)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-
-		//transimit image
+		// transimit image
 		imagefile, err := c.FormFile(imagename)
 		if err != nil {
 			logrus.Fatal(err)
@@ -167,6 +152,33 @@ func handlePrivatePush(c echo.Context) error {
 		defer dst.Close()
 
 		_, err = io.Copy(dst, src)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		// use imageID as file name
+		err = os.Rename(serverFilePath.ImagesPath+username+"/"+imagename, serverFilePath.ImagesPath+username+"/"+imageID)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		// make change to imagesInfo.json
+		imagesInfo = append(imagesInfo, ImageInfo{
+			Repository: repository,
+			Tag:        tag,
+			ImageID:    imageID,
+			Created:    created,
+			Size:       size,
+			Type:       imageType,
+			Owner:      owner,
+		})
+
+		imagesInfoInJSON, err = json.Marshal(imagesInfo)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
+		err = ioutil.WriteFile(serverFilePath.ImagesPath+username+"/"+"imagesInfo.json", imagesInfoInJSON, os.ModePerm)
 		if err != nil {
 			logrus.Fatal(err)
 		}

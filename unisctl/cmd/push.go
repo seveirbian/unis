@@ -52,11 +52,15 @@ var pushCmd = &cobra.Command{
 		//get image size
 		size = strconv.FormatInt(fileInfo.Size()/1024/1024, 10)
 
+		//generate created
+		var created = string(time.Now().Format("2006-01-02"))
+		i := string(time.Now().Format("2006-01-02T15:04:05Z"))
+
 		//generate imageID
 		if content, err := ioutil.ReadFile(path); err != nil {
 			logrus.Fatal(err)
 		} else {
-			temp := sha256.Sum256(content)
+			temp := sha256.Sum256([]byte(string(content) + i))
 			imageID = hex.EncodeToString(temp[:])
 		}
 
@@ -90,9 +94,6 @@ var pushCmd = &cobra.Command{
 		}
 
 		var repository string
-
-		//generate created
-		var created = string(time.Now().Format("2006-01-02"))
 
 		if pushPublicFlag {
 			//push public image

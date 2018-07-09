@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
@@ -76,8 +75,8 @@ func (rqHandler Handler) Serve(serveIP string) error {
 	server.POST("/images/push/public/:imagename", handlePublicPush)
 	server.POST("/images/push/:username/:imagename", handlePrivatePush)
 	//serve "unisctl rmi" command
-	server.DELETE("/images/remove/public/:imagename", handlePublicRmi)
-	// server.DELETE("/images/remove/:username/:imagename", handlePrivateRmi)
+	server.POST("/images/remove/public/:imageID", handlePublicRmi)
+	server.POST("/images/remove/:username/:imageID", handlePrivateRmi)
 	// //serve "unisctl tag" command
 	// server.POST("/images/public/:oldimage/:newimage", handleTag)
 	// //serve "unisctl run" command
@@ -188,47 +187,4 @@ func (serverFilePath ServerFilePath) readUsersJSON() error {
 		}
 	}
 	return nil
-}
-
-func handlePublicRmi(c echo.Context) error {
-	imagename := c.Param("imagename")
-	username := c.FormValue("username")
-	password := c.FormValue("password")
-
-	if validateUser(username, password) {
-		// get public images info
-		publicImagesInfoInJSON, err := ioutil.ReadFile(serverFilePath.ImagesPublicPath + "imagesInfo.json")
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		var publicImagesInfo []ImageInfo
-		err = json.Unmarshal(publicImagesInfoInJSON, &publicImagesInfo)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-
-		// get the image that to be removed
-		for index, imageinfo := range publicImagesInfo {
-			if imageinfo.Repository == imagename && imageinfo.Owner == username {
-				// delete the image file
-				err := os.Remove(serverFilePath.ImagesPublicPath + imagename)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-				// delete the image info
-				publicImagesInfo = append(publicImagesInfo[:index], publicImagesInfo[index+1:]...)
-				// write public images info back
-				publicImagesInfoInJSON, err = json.Marshal(publicImagesInfo)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-
-				err = ioutil.WriteFile(serverFilePath.ImagesPublicPath+"imagesInfo.json", publicImagesInfoInJSON, os.ModePerm)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-			}
-		}
-	}
-	return c.String(http.StatusOK, "image removed")
 }
