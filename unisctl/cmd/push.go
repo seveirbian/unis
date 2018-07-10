@@ -104,34 +104,34 @@ var pushCmd = &cobra.Command{
 		}
 
 		//generate arguments
-		args0 := "curl"
-		args1 := "-F"
-		args2 := "username=" + ConfigContent.Username
-		args3 := "-F"
-		args4 := "password=" + ConfigContent.Password
-		args5 := "-F"
-		args6 := "repository=" + repository
-		args7 := "-F"
-		args8 := "tag=" + tag
-		args9 := "-F"
-		args10 := "imageID=" + imageID
-		args11 := "-F"
-		args12 := "created=" + created
-		args13 := "-F"
-		args14 := "size=" + size
-		args15 := "-F"
-		args16 := "imageType=" + imageType
-		args17 := "-F"
-		args18 := "owner=" + ConfigContent.Username
-		args19 := "-F"
-		args20 := image + "=@" + path
-		args21 := ConfigContent.Apiserver + "/images/push/" + repository + "/" + image
+		arg0 := "curl"
+		arg1 := "-F"
+		arg2 := "username=" + ConfigContent.Username
+		arg3 := "-F"
+		arg4 := "password=" + ConfigContent.Password
+		arg5 := "-F"
+		arg6 := "repository=" + repository
+		arg7 := "-F"
+		arg8 := "tag=" + tag
+		arg9 := "-F"
+		arg10 := "imageID=" + imageID
+		arg11 := "-F"
+		arg12 := "created=" + created
+		arg13 := "-F"
+		arg14 := "size=" + size
+		arg15 := "-F"
+		arg16 := "imageType=" + imageType
+		arg17 := "-F"
+		arg18 := "owner=" + ConfigContent.Username
+		arg19 := "-F"
+		arg20 := image + "=@" + path
+		arg21 := ConfigContent.Apiserver + "/images/push/" + repository + "/" + image
 
 		//execute curl to push image
-		child := exec.Command(args0, args1, args2, args3, args4,
-			args5, args6, args7, args8, args9, args10, args11,
-			args12, args13, args14, args15, args16, args17,
-			args18, args19, args20, args21)
+		child := exec.Command(arg0, arg1, arg2, arg3, arg4,
+			arg5, arg6, arg7, arg8, arg9, arg10, arg11,
+			arg12, arg13, arg14, arg15, arg16, arg17,
+			arg18, arg19, arg20, arg21)
 
 		output, err := child.Output()
 		if err != nil {
