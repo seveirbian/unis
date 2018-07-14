@@ -29,7 +29,7 @@ func handleSignup(c echo.Context) error {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	//create new account folder and info file
+	//create new account folder and info file in images folder
 	err = os.Mkdir(serverFilePath.ImagesPath+"/"+username, os.ModePerm)
 	if err != nil {
 		logrus.Fatal(err)
@@ -41,6 +41,22 @@ func handleSignup(c echo.Context) error {
 	}
 	os.Create(serverFilePath.ImagesPath + "/" + username + "/" + "imagesInfo.json")
 	err = ioutil.WriteFile(serverFilePath.ImagesPath+"/"+username+"/"+"imagesInfo.json", imagesInfoInJSON, os.ModePerm)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	//create new account folder and info file in nodes folder
+	err = os.Mkdir(serverFilePath.NodesPath+"/"+username, os.ModePerm)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	nodesInfo := []NodeInfo{}
+	nodesInfoInJSON, err := json.Marshal(nodesInfo)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	os.Create(serverFilePath.NodesPath + "/" + username + "/" + "nodesInfo.json")
+	err = ioutil.WriteFile(serverFilePath.NodesPath+"/"+username+"/"+"nodesInfo.json", nodesInfoInJSON, os.ModePerm)
 	if err != nil {
 		logrus.Fatal(err)
 	}

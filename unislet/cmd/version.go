@@ -8,12 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const ctlVersionTemplate = `Unisctl:
+const ctlVersionTemplate = `Unislet:
 Version:     0.001.0.0
 OS/Arch:     {{getOSArch}}
 `
 
-var versionUsage = `Usage:  unisctl version [OPTIONS]
+var versionUsage = `Usage:  unislet version [OPTIONS]
 
 Options:
   -h, --help            help for version
@@ -25,8 +25,8 @@ var ctlVersion = template.Must(template.New("ctlVersion").
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Show the unisctl version",
-	Long:  "Show the unisctl version",
+	Short: "Show the unislet version",
+	Long:  "Show the unislet version",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := ctlVersion.Execute(os.Stdout, nil); err != nil {

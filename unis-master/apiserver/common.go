@@ -76,7 +76,15 @@ func getPrivateImagesInfo(username string) []ImageInfo {
 
 // create the server file path
 func (serverFilePath ServerFilePath) createFilePath() error {
-	_, err := os.Stat(serverFilePath.RootPath)
+	_, err := os.Stat(serverFilePath.UnisPath)
+	if err != nil {
+		err = os.Mkdir(serverFilePath.UnisPath, os.ModePerm)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+	}
+
+	_, err = os.Stat(serverFilePath.RootPath)
 	if err != nil {
 		err = os.Mkdir(serverFilePath.RootPath, os.ModePerm)
 		if err != nil {
@@ -92,7 +100,7 @@ func (serverFilePath ServerFilePath) createFilePath() error {
 		}
 	}
 
-	//detect $HOME/.unis/images/public/
+	// detect $HOME/.unis/images/public/
 	_, err = os.Stat(serverFilePath.ImagesPublicPath)
 	if err != nil {
 		err = os.Mkdir(serverFilePath.ImagesPublicPath, os.ModePerm)
@@ -100,7 +108,7 @@ func (serverFilePath ServerFilePath) createFilePath() error {
 			logrus.Fatal(err)
 		}
 	}
-	//detect $HOME/.unis/images/public/imagesInfo.json
+	// detect $HOME/.unis/images/public/imagesInfo.json
 	_, err = os.Stat(serverFilePath.ImagesPublicPath + "imagesInfo.json")
 	if err != nil {
 		_, err = os.Create(serverFilePath.ImagesPublicPath + "imagesInfo.json")
@@ -126,9 +134,27 @@ func (serverFilePath ServerFilePath) createFilePath() error {
 		}
 	}
 
+	// detect $HOME/.unis/nodes/public/
 	_, err = os.Stat(serverFilePath.NodesPublicPath)
 	if err != nil {
 		err = os.Mkdir(serverFilePath.NodesPublicPath, os.ModePerm)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+	}
+	// detect $HOME/.unis/nodes/public/nodesInfo.json
+	_, err = os.Stat(serverFilePath.NodesPublicPath + "nodesInfo.json")
+	if err != nil {
+		_, err = os.Create(serverFilePath.NodesPublicPath + "nodesInfo.json")
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		publicNodesInfo := []NodeInfo{}
+		publicNodesInfoInJSON, err := json.Marshal(publicNodesInfo)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		err = ioutil.WriteFile(serverFilePath.NodesPublicPath+"nodesInfo.json", publicNodesInfoInJSON, os.ModePerm)
 		if err != nil {
 			logrus.Fatal(err)
 		}
@@ -172,4 +198,34 @@ func (serverFilePath ServerFilePath) loadUsersJSON() error {
 
 	}
 	return nil
+}
+
+func getPublicNodesInfo() []NodeInfo {
+	publicNodesInfoInJSON, err := ioutil.ReadFile(serverFilePath.NodesPublicPath + "nodesInfo.json")
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	var publicNodesInfo []NodeInfo
+	err = json.Unmarshal(publicNodesInfoInJSON, &publicNodesInfo)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	return publicNodesInfo
+}
+
+func getPrivateNodesInfo(username string) []NodeInfo {
+	privateNodesInfoInJSON, err := ioutil.ReadFile(serverFilePath.NodesPath + "/" + username + "/nodesInfo.json")
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	var privateNodesInfo []NodeInfo
+	err = json.Unmarshal(privateNodesInfoInJSON, &privateNodesInfo)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	return privateNodesInfo
 }
