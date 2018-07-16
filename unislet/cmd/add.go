@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/labstack/echo"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -97,7 +96,9 @@ var addCmd = &cobra.Command{
 			}
 
 			// create a server to response apiserver
-			go unisletServer(":9899")
+			if resp.StatusCode == http.StatusOK {
+				unisletServer(":9899")
+			}
 
 		} else {
 			// this node is private
@@ -125,7 +126,9 @@ var addCmd = &cobra.Command{
 			}
 
 			// create a server to response apiserver
-			go unisletServer(":9899")
+			if resp.StatusCode == http.StatusOK {
+				unisletServer(":9899")
+			}
 		}
 	},
 }
@@ -146,7 +149,7 @@ func init() {
 	addCmd.Flags().BoolVarP(&addPublicFlag, "public", "p", false, "Set node type (public or private)")
 
 	// set reserved cpu
-	addCmd.Flags().StringVarP(&reservedCPU, "reserved-cpu", "c", "1.0", "Set reserved cpu for system and unislet")
+	addCmd.Flags().StringVarP(&reservedCPU, "reserved-cpu", "c", "1", "Set reserved cpu for system and unislet")
 
 	// set reserved mem
 	addCmd.Flags().StringVarP(&reservedMem, "reserved-mem", "m", "3", "Set reserved memory for system and unislet")
