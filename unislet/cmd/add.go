@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+
 	"strings"
 
 	"github.com/labstack/echo"
@@ -51,6 +52,12 @@ var addCmd = &cobra.Command{
 	Long:  "add a node to unis",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		child := exec.Command("lsof", "-i", ":9899")
+		output, _ := child.Output()
+		if len(string(output)) != 0 {
+			logrus.Fatal("unislet has being running")
+		}
+
 		ConfigContent.NodeName = nodeName
 		ConfigContent.NodeEnv = addEnvFlag
 

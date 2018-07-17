@@ -52,6 +52,6 @@ type NodeInfo struct {
 	TotalCPU int64
 	TotalMem int64
 
-	images    []ImageInfo
+	Images    []ImageInfo
 	Instances []Instance
 }
