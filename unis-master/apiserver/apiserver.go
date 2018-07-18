@@ -63,6 +63,10 @@ func (apiServer Server) Serve(serveIP string) error {
 	server.POST("/images/tag/public/:oldimage/:oldtag/:newimage/:newtag", handlePublicTag)
 	server.POST("/images/tag/:username/:oldimage/:oldtag/:newimage/:newtag", handlePrivateTag)
 
+	// serve "unisctl pull" command
+	server.POST("/images/pull/public/:imageID", handlePublicPull)
+	// server.POST("/images/pull/:username/:imageID", handlePrivatePull)
+
 	// // serve "unisctl run" command
 	// server.POST()
 	// // serve "unisctl stop" command
@@ -82,11 +86,6 @@ func (apiServer Server) Serve(serveIP string) error {
 	// serve "unislet add" command
 	server.POST("/nodes/add/public/:nodename", handlePublicAdd)
 	server.POST("/nodes/add/:username/:nodename", handlePrivateAdd)
-
-	// ABANDONED
-	// serve "unisctl pull" command
-	// server.POST("/images/pull/public/:imageID", handlePublicPull)
-	// server.POST("/images/pull/:username/:imageID", handlePrivatePull)
 
 	// Run request-handler, this should never exit
 	return server.Start(serveIP)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/labstack/echo"
@@ -59,6 +60,14 @@ func handleSignup(c echo.Context) error {
 	err = ioutil.WriteFile(serverFilePath.NodesPath+"/"+username+"/"+"nodesInfo.json", nodesInfoInJSON, os.ModePerm)
 	if err != nil {
 		logrus.Fatal(err)
+	}
+
+	resp, err := http.PostForm("http://127.0.0.1:10000/users/add/"+username, url.Values{})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		logrus.Fatal("cannot add new users to controller")
 	}
 
 	return c.String(http.StatusOK, "New account has created")

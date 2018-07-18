@@ -1,9 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"os"
 	"time"
 
 	"github.com/labstack/echo"
@@ -80,76 +77,21 @@ func (controller Controller) Start(serveIP string) error {
 
 	// handle test
 	cServer.GET("/", handleConnect)
+	// handle add user
+	cServer.POST("/users/add/:username", handleAddUser)
 	// handle add node
-	// cServer.POST("/nodes/add/:nodename", handleAddNode)
+	cServer.POST("/nodes/add/public/:nodename", handleAddPublicNode)
+	cServer.POST("/nodes/add/:username/:nodename", handleAddPrivateNode)
 	// // handle remove node
 	// cServer.POST("/nodes/remove/:nodename", handleRemoveNode)
 	// // handle run instance
-	// cServer.POST("/instances/run/:instancename", handleRunInstance)
+	cServer.POST("/instances/run/:instancename", handleRunInstance)
 	// // handle stop instance
 	// cServer.POST("/instance/stop/:instancename", handleStopInstance)
 
 	return cServer.Start(serveIP)
 }
 
-func loadNodes() error {
-	// load public nodes info
-	_, err := os.Stat(os.Getenv("HOME") + "/.unis/apiserver/nodes/public/nodesInfo.json")
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	publicNodesInJSON, err := ioutil.ReadFile(os.Getenv("HOME") + "/.unis/apiserver/nodes/public/nodesInfo.json")
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	err = json.Unmarshal(publicNodesInJSON, &publicNodes)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	// load private nodes info
-	// get all users info
-	_, err = os.Stat(os.Getenv("HOME") + "/.unis/apiserver/users.json")
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	usersInfoInJSON, err := ioutil.ReadFile(os.Getenv("HOME") + "/.unis/apiserver/users.json")
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	err = json.Unmarshal(usersInfoInJSON, &usersInfo)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	for _, user := range usersInfo {
-		// detect whether user has private nodes
-		f, err := os.Stat(os.Getenv("HOME") + "/.unis/apiserver/nodes/" + user.Username)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		if f.IsDir() {
-			_, err = os.Stat(os.Getenv("HOME") + "/.unis/apiserver/nodes/" + user.Username + "/nodesInfo.json")
-			if err != nil {
-				logrus.Fatal(err)
-			}
-			nodesInfoInJSON, err := ioutil.ReadFile(os.Getenv("HOME") + "/.unis/apiserver/nodes/" + user.Username + "/nodesInfo.json")
-			if err != nil {
-				logrus.Fatal(err)
-			}
-			nodesInfo := []NodeInfo{}
-			err = json.Unmarshal(nodesInfoInJSON, &nodesInfo)
-			if err != nil {
-				logrus.Fatal(err)
-			}
-
-			privateNodes[user.Username] = nodesInfo
-
-		}
-	}
-
-	logrus.Info(publicNodes)
-	logrus.Info(privateNodes)
-
+func handleRunInstance(c echo.Context) error {
 	return nil
 }

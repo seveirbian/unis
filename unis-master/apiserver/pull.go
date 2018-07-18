@@ -1,18 +1,17 @@
 package apiserver
 
 import (
-	"fmt"
 	"net/http"
 	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 )
 
-// ABANDONED
-
 func handlePublicPull(c echo.Context) error {
-	unisctlAddr := c.FormValue("unisctlAddr")
+	unisctlAddr := strings.Split(c.Request().RemoteAddr, ":")[0] + ":10001"
 	imageID := c.Param("imageID")
 
 	username := c.FormValue("username")
@@ -22,19 +21,19 @@ func handlePublicPull(c echo.Context) error {
 		publicImagesInfo := getPublicImagesInfo()
 
 		for _, image := range publicImagesInfo {
-			if image.ImageID == imageID {
+			if strings.Contains(image.ImageID, imageID) {
 				arg0 := "curl"
 				arg1 := "-F"
-				arg2 := image.Repository + ":" + image.Tag + "=@" + serverFilePath.ImagesPublicPath + image.ImageID
-				arg3 := unisctlAddr + "/pull/"
+				arg2 := strings.Split(image.Repository, "/")[1] + "=@" + serverFilePath.ImagesPublicPath + image.ImageID
+				arg3 := "http://" + unisctlAddr + "/images/pull/" + strings.Split(image.Repository, "/")[1]
+
+				time.Sleep(2000)
 
 				child := exec.Command(arg0, arg1, arg2, arg3)
-				output, err := child.Output()
+				_, err := child.Output()
 				if err != nil {
 					logrus.Fatal(err)
 				}
-
-				fmt.Println(output)
 
 				return c.String(http.StatusOK, "image pulled")
 			}
