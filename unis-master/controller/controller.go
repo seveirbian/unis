@@ -31,6 +31,8 @@ type Instance struct {
 	RequestMem int64
 	LimitCPU   int64
 	LimitMem   int64
+
+	Type string
 }
 
 type NodeInfo struct {

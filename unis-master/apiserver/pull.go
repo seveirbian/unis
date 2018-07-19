@@ -2,16 +2,12 @@ package apiserver
 
 import (
 	"net/http"
-	"os/exec"
 	"strings"
-	"time"
 
 	"github.com/labstack/echo"
-	"github.com/sirupsen/logrus"
 )
 
 func handlePublicPull(c echo.Context) error {
-	unisctlAddr := strings.Split(c.Request().RemoteAddr, ":")[0] + ":10001"
 	imageID := c.Param("imageID")
 
 	username := c.FormValue("username")
@@ -22,20 +18,26 @@ func handlePublicPull(c echo.Context) error {
 
 		for _, image := range publicImagesInfo {
 			if strings.Contains(image.ImageID, imageID) {
-				arg0 := "curl"
-				arg1 := "-F"
-				arg2 := strings.Split(image.Repository, "/")[1] + "=@" + serverFilePath.ImagesPublicPath + image.ImageID
-				arg3 := "http://" + unisctlAddr + "/images/pull/" + strings.Split(image.Repository, "/")[1]
 
-				time.Sleep(2000)
+				return c.Attachment(serverFilePath.ImagesPublicPath+image.ImageID, strings.Split(image.Repository, "/")[1])
+			}
+		}
+	}
+	return c.String(http.StatusNotFound, "Wrong imageID")
+}
 
-				child := exec.Command(arg0, arg1, arg2, arg3)
-				_, err := child.Output()
-				if err != nil {
-					logrus.Fatal(err)
-				}
+func handlePrivatePull(c echo.Context) error {
+	imageID := c.Param("imageID")
 
-				return c.String(http.StatusOK, "image pulled")
+	username := c.Param("username")
+	password := c.FormValue("password")
+
+	if validateUser(username, password) {
+		privateImagesInfo := getPrivateImagesInfo(username)
+
+		for _, image := range privateImagesInfo {
+			if strings.Contains(image.ImageID, imageID) {
+				return c.Attachment(serverFilePath.ImagesPath+username+"/"+image.ImageID, strings.Split(image.Repository, "/")[1])
 			}
 		}
 	}

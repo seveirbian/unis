@@ -65,7 +65,7 @@ func (apiServer Server) Serve(serveIP string) error {
 
 	// serve "unisctl pull" command
 	server.POST("/images/pull/public/:imageID", handlePublicPull)
-	// server.POST("/images/pull/:username/:imageID", handlePrivatePull)
+	server.POST("/images/pull/:username/:imageID", handlePrivatePull)
 
 	// // serve "unisctl run" command
 	// server.POST()

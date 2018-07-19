@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 
@@ -28,9 +28,6 @@ var pullCmd = &cobra.Command{
 	Long:  "Pull an image from registry",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		// start server to receive image
-		child := exec.Command("fileReceiver", ":10001")
-		go child.Output()
 
 		// get imageID
 		imageID := args[0]
@@ -47,19 +44,24 @@ var pullCmd = &cobra.Command{
 		if err != nil {
 			logrus.Fatal(err)
 		} else {
-			body, err := ioutil.ReadAll(resp.Body)
+			filename := (strings.Split(resp.Header.Get("Content-Disposition"), "\"")[1])
+			f, err := os.Create(os.Getenv("HOME") + "/.unis/unisctl/pulled/" + filename)
 			if err != nil {
 				logrus.Fatal(err)
-			} else {
-				fmt.Println(string(body))
 			}
+			_, err = io.Copy(f, resp.Body)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+
+			fmt.Println("image pulled")
 		}
 
 		// kill fileReceiver
-		err = child.Process.Kill()
-		if err != nil {
-			logrus.Fatal(err)
-		}
+		// err = child.Process.Kill()
+		// if err != nil {
+		// 	logrus.Fatal(err)
+		// }
 	},
 }
 
