@@ -55,9 +55,9 @@ Options:
   -a, --all               Show all nodes (default private nodes)
       --help              Print Usage
 
-## unisctl ps --help
+## unisctl instances --help
 
-Usage: unisctl ps [OPTIONS]
+Usage: unisctl instances [OPTIONS]
 
 List instances
 

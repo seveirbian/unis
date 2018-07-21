@@ -80,8 +80,9 @@ func (apiServer Server) Serve(serveIP string) error {
 	// // serve "unistl nodes" command
 	server.POST("/nodes/show/public/nodes", handlePublicNodes)
 	server.POST("/nodes/show/:username/nodes", handlePrivateNodes)
-	// // serve "unisctl stats" command
-	// server.POST()
+	// serve "unisctl instances" command
+	server.POST("/instances/show/all/instances", handleAllInstances)
+	server.POST("/instances/show/:username/instances", handlePrivateInstances)
 
 	// serve UNISLET
 	// serve "unislet add" command
