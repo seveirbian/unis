@@ -68,7 +68,7 @@ func init() {
 func createPath() {
 	_, err := os.Stat(defaultPath)
 	if err != nil {
-		err = os.Mkdir(defaultPath, os.ModePerm)
+		err = os.MkdirAll(defaultPath, os.ModePerm)
 		if err != nil {
 			fmt.Println(err)
 			logrus.Fatal(err)

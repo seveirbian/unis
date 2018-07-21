@@ -76,7 +76,7 @@ func init() {
 func createPullPath() error {
 	_, err := os.Stat(os.Getenv("HOME") + "/.unis/unisctl/pulled/")
 	if err != nil {
-		err = os.Mkdir(os.Getenv("HOME")+"/.unis/unisctl/pulled/", os.ModePerm)
+		err = os.MkdirAll(os.Getenv("HOME")+"/.unis/unisctl/pulled/", os.ModePerm)
 		if err != nil {
 			logrus.Fatal(err)
 		}

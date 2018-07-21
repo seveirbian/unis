@@ -128,7 +128,7 @@ func createPath() {
 
 		ConfigContent.TotalCPU = int64(runtime.NumCPU())
 		ConfigContent.RestCPU = 0
-		ConfigContent.TotalMem = int64(sysTotalMemory()) / 1073741824.0
+		ConfigContent.TotalMem = int64(sysTotalMemory()) / 1048576.0
 		ConfigContent.RestMem = 0
 
 		configInJSON, err := json.Marshal(ConfigContent)

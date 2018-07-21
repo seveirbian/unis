@@ -1,23 +1,6 @@
-package apiserver
+package scheduler
 
-type Server struct {
-	Version string
-}
-
-type ServerFilePath struct {
-	UnisPath         string
-	RootPath         string
-	ImagesPath       string
-	NodesPath        string
-	ImagesPublicPath string
-	NodesPublicPath  string
-	UsersJSONPath    string
-}
-
-type userInfo struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
+var FirstFit = "FirstFit"
 
 type ImageInfo struct {
 	Repository string
@@ -38,8 +21,8 @@ type Instance struct {
 
 	RequestCPU int64
 	RequestMem int64
-	// LimitCPU   int64
-	// LimitMem   int64
+	LimitCPU   int64
+	LimitMem   int64
 }
 
 type NodeInfo struct {

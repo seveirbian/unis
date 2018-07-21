@@ -37,9 +37,10 @@ var signinCmd = &cobra.Command{
 				logrus.Fatal(err)
 			} else {
 				fmt.Println(string(body))
-				if resp.StatusCode == 200 {
+				if resp.StatusCode == http.StatusOK {
 					ConfigContent.Username = siUsername
 					ConfigContent.Password = siPassword
+
 					//write ConfigContent into configure.json
 					configInJSON, err := json.Marshal(ConfigContent)
 					if err != nil {
