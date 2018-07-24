@@ -70,15 +70,12 @@ func (apiServer Server) Serve(serveIP string) error {
 	// // serve "unisctl run" command
 	server.POST("/instances/run/public/:imageID", handlePublicRun)
 	server.POST("/instances/run/:username/:imageID", handlePrivateRun)
+
 	// serve "unisctl stop" command
 	server.POST("/instances/stop/public/:instanceID", handlePublicStop)
 	server.POST("/instances/stop/:username/:instanceID", handlePrivateStop)
-	// // serve "unisctl ps" command
-	// server.POST()
 
-	// // serve "unisctl version" command
-	// server.POST()
-	// // serve "unistl nodes" command
+	// serve "unistl nodes" command
 	server.POST("/nodes/show/public/nodes", handlePublicNodes)
 	server.POST("/nodes/show/:username/nodes", handlePrivateNodes)
 	// serve "unisctl instances" command

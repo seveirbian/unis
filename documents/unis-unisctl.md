@@ -127,15 +127,6 @@ Options:
   -p, --password        password
   -u, --username        username
 
-## unisctl stats --help
-
-Usage: unisctl stats [OPTIONS]
-
-List the status of all components of unis
-
-Options:
-      --help              Print Usage
-
 ## unisctl stop --help
 
 Usage: unisctl stop [OPTIONS] INSTANCE [INSTANCE...]
