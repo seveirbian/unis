@@ -160,7 +160,7 @@ func init() {
 	addCmd.Flags().StringVarP(&reservedCPU, "reserved-cpu", "c", "1", "Set reserved cpu for system and unislet")
 
 	// set reserved mem
-	addCmd.Flags().StringVarP(&reservedMem, "reserved-mem", "m", "1024", "Set reserved memory for system and unislet")
+	addCmd.Flags().StringVarP(&reservedMem, "reserved-mem", "m", "200", "Set reserved memory for system and unislet")
 
 }
 
