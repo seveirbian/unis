@@ -23,6 +23,9 @@ func firstFitSchedule(nodesInfo []NodeInfo, imagetype, requestCPU, requestMem st
 		if node.NodeEnv != imagetype {
 			continue
 		}
+		if !node.NodeActive {
+			continue
+		}
 		availableCPU := node.TotalCPU
 		availableMem := node.TotalMem
 		neededCPU, _ := strconv.Atoi(requestCPU)

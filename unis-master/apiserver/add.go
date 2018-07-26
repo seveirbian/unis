@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
@@ -26,9 +27,25 @@ func handlePublicAdd(c echo.Context) error {
 
 	if validateUser(username, password) {
 		publicNodesInfo := getPublicNodesInfo()
-		for _, node := range publicNodesInfo {
+		for index, node := range publicNodesInfo {
 			// detect whether node name has existed
 			if node.NodeName == nodename {
+				if strings.Split(node.NodeAddr, ":")[0] == strings.Split(nodeaddr, ":")[0] {
+					publicNodesInfo[index].NodeActive = true
+
+					// public node reactive
+					publicNodesInfoInJSON, err := json.Marshal(publicNodesInfo)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+
+					err = ioutil.WriteFile(serverFilePath.NodesPublicPath+"nodesInfo.json", publicNodesInfoInJSON, os.ModePerm)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+
+					return c.String(http.StatusOK, "node reactive")
+				}
 				return c.String(http.StatusConflict, "node name has existed")
 			}
 		}
@@ -41,6 +58,7 @@ func handlePublicAdd(c echo.Context) error {
 			NodeAddr:       nodeaddr,
 			DockerInfo:     dockerinfo,
 			HypervisorInfo: hypervisorinfo,
+			NodeActive:     true,
 			TotalCPU:       int64(totalcpu),
 			TotalMem:       int64(totalmem),
 		}
@@ -57,17 +75,6 @@ func handlePublicAdd(c echo.Context) error {
 		if err != nil {
 			logrus.Fatal(err)
 		}
-
-		// // add new node to controller
-		// resp, err := http.PostForm("http://127.0.0.1:10000/nodes/add/public/"+nodename, url.Values{"nodename": {newNode.NodeName}, "nodetype": {newNode.NodeType},
-		// 	"nodeenv": {newNode.NodeEnv}, "nodeaddr": {newNode.NodeAddr}, "dockerinfo": {newNode.DockerInfo}, "hypervisorinfo": {newNode.HypervisorInfo},
-		// 	"totalcpu": {strconv.Itoa(int(newNode.TotalCPU))}, "totalmem": {strconv.Itoa(int(newNode.TotalMem))}})
-		// if err != nil {
-		// 	logrus.Fatal(err)
-		// }
-		// if resp.StatusCode != http.StatusOK {
-		// 	logrus.Fatal(resp.StatusCode)
-		// }
 
 		return c.String(http.StatusOK, "Node added")
 	}
@@ -90,9 +97,25 @@ func handlePrivateAdd(c echo.Context) error {
 
 	if validateUser(username, password) {
 		privateNodesInfo := getPrivateNodesInfo(username)
-		for _, node := range privateNodesInfo {
+		for index, node := range privateNodesInfo {
 			// detect whether node name has existed
 			if node.NodeName == nodename {
+				if strings.Split(node.NodeAddr, ":")[0] == strings.Split(nodeaddr, ":")[0] {
+					privateNodesInfo[index].NodeActive = true
+
+					// private node reactive
+					privateNodesInfoInJSON, err := json.Marshal(privateNodesInfo)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+
+					err = ioutil.WriteFile(serverFilePath.NodesPath+username+"/nodesInfo.json", privateNodesInfoInJSON, os.ModePerm)
+					if err != nil {
+						logrus.Fatal(err)
+					}
+
+					return c.String(http.StatusOK, "node reactive")
+				}
 				return c.String(http.StatusConflict, "node name has existed")
 			}
 		}
@@ -105,6 +128,7 @@ func handlePrivateAdd(c echo.Context) error {
 			NodeAddr:       nodeaddr,
 			DockerInfo:     dockerinfo,
 			HypervisorInfo: hypervisorinfo,
+			NodeActive:     true,
 			TotalCPU:       int64(totalcpu),
 			TotalMem:       int64(totalmem),
 		}

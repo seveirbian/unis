@@ -52,6 +52,7 @@ var nodesCmd = &cobra.Command{
 				label += "HYPERVISOR          "
 				label += "AVAIL CPU          "
 				label += "AVAIL MEM          "
+				label += "NODE STATUS          "
 				fmt.Println(label)
 				fmt.Println(string(body))
 			}

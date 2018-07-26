@@ -32,6 +32,7 @@ type NodeInfo struct {
 	NodeEnv        string // Docker or Unikernel
 	DockerInfo     string
 	HypervisorInfo string
+	NodeActive     bool
 
 	TotalCPU int64
 	TotalMem int64

@@ -174,5 +174,7 @@ func unisletServer(ipaddr string) error {
 	// stop instance
 	server.POST("/instances/stop/:instanceID", handleStopInstance)
 
-	return server.Start(ipaddr)
+	rerr := server.Start(ipaddr)
+
+	return rerr
 }

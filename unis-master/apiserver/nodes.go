@@ -55,6 +55,16 @@ func handlePublicNodes(c echo.Context) error {
 			bodyContent += EmptyString(strings.Count("Avail Mem", "") +
 				blankLenth - strings.Count(strconv.Itoa(int(node.TotalMem)), ""))
 
+			if node.NodeActive {
+				bodyContent += "ACTIVE"
+				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
+					blankLenth - strings.Count("active", ""))
+			} else {
+				bodyContent += "DEAD"
+				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
+					blankLenth - strings.Count("dead", ""))
+			}
+
 			bodyContent += "\n"
 		}
 		for _, node := range privateNodesInfo {
@@ -89,6 +99,16 @@ func handlePublicNodes(c echo.Context) error {
 			bodyContent += strconv.Itoa(int(node.TotalMem))
 			bodyContent += EmptyString(strings.Count("Avail Mem", "") +
 				blankLenth - strings.Count(strconv.Itoa(int(node.TotalMem)), ""))
+
+			if node.NodeActive {
+				bodyContent += "ACTIVE"
+				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
+					blankLenth - strings.Count("active", ""))
+			} else {
+				bodyContent += "DEAD"
+				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
+					blankLenth - strings.Count("dead", ""))
+			}
 
 			bodyContent += "\n"
 		}
@@ -142,6 +162,16 @@ func handlePrivateNodes(c echo.Context) error {
 			bodyContent += strconv.Itoa(int(node.TotalMem))
 			bodyContent += EmptyString(strings.Count("Avail Mem", "") +
 				blankLenth - strings.Count(strconv.Itoa(int(node.TotalMem)), ""))
+
+			if node.NodeActive {
+				bodyContent += "ACTIVE"
+				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
+					blankLenth - strings.Count("active", ""))
+			} else {
+				bodyContent += "DEAD"
+				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
+					blankLenth - strings.Count("dead", ""))
+			}
 
 			bodyContent += "\n"
 		}
