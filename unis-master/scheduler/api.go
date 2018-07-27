@@ -6,6 +6,7 @@ type ImageInfo struct {
 	Repository string
 	Tag        string
 	ImageID    string
+	DockerID   string
 	Created    string
 	Size       string
 	Type       string

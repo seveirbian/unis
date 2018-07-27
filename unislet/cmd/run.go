@@ -45,6 +45,7 @@ func handleReceiveImage(c echo.Context) error {
 
 func handleRunImage(c echo.Context) error {
 	imageID := c.Param("imageID")
+	dockerID := c.FormValue("dockerID")
 	imageType := c.FormValue("imageType")
 	// maxCPU := c.FormValue("maxCPU")
 	// maxMem := c.FormValue("maxMem")
@@ -53,22 +54,24 @@ func handleRunImage(c echo.Context) error {
 
 	// run docker instance
 	if imageType == "docker" {
-		// import docker image
-		arg0 := "docker"
-		arg1 := "load"
-		arg2 := "-i"
-		arg3 := os.Getenv("HOME") + "/.unis/unislet/images/" + imageID
+		if dockerID == "" {
+			// import docker image
+			arg0 := "docker"
+			arg1 := "load"
+			arg2 := "-i"
+			arg3 := os.Getenv("HOME") + "/.unis/unislet/images/" + imageID
 
-		child := exec.Command(arg0, arg1, arg2, arg3)
-		output, err := child.Output()
+			child := exec.Command(arg0, arg1, arg2, arg3)
+			output, err := child.Output()
 
-		fmt.Println(string(output))
-		dockerID := strings.Split(strings.Split(string(output), ": ")[1], "\n")[0]
+			fmt.Println(string(output))
+			dockerID = strings.Split(strings.Split(string(output), ": ")[1], "\n")[0]
 
-		if err != nil {
-			logrus.Fatal(err)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			fmt.Println(dockerID)
 		}
-		fmt.Println(dockerID)
 
 		// run docker image
 		arguments := strings.Split(argument, " ")
@@ -94,7 +97,7 @@ func handleRunImage(c echo.Context) error {
 		// docker run
 		instance := exec.Command("docker")
 		instance.Args = args
-		err = instance.Start()
+		err := instance.Start()
 
 		if err != nil {
 			fmt.Println(err)
@@ -105,7 +108,7 @@ func handleRunImage(c echo.Context) error {
 
 		// get instanceID
 		child1 := exec.Command("docker", "ps")
-		output, err = child1.Output()
+		output, err := child1.Output()
 		if err != nil {
 			return c.String(http.StatusNotImplemented, err.Error())
 		}
@@ -113,7 +116,7 @@ func handleRunImage(c echo.Context) error {
 		instanceID := strings.Split(strings.Split(string(output), "\n")[1], " ")[0]
 		fmt.Println("instanceID: " + instanceID)
 
-		return c.String(http.StatusOK, instanceID)
+		return c.String(http.StatusOK, dockerID+" "+instanceID)
 
 	} else if imageType == "unikernel" {
 		return c.String(http.StatusBadGateway, "unikernel now is not supported")

@@ -32,8 +32,9 @@ func handleRunPublicInstance(c echo.Context) error {
 		if node.NodeName == nodename {
 			for _, image := range node.Images {
 				if image.ImageID == imageID {
+
 					// ask unislet to run instance
-					resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+image.ImageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}})
+					resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+image.ImageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}, "dockerID": {image.DockerID}})
 					if err != nil {
 						return c.String(http.StatusBadRequest, err.Error())
 					}
@@ -45,10 +46,12 @@ func handleRunPublicInstance(c echo.Context) error {
 					if err != nil {
 						logrus.Fatal(err)
 					}
-					instanceID := string(body)
+
+					dockerID := strings.Split(string(body), " ")[0]
+					instanceID := strings.Split(string(body), " ")[1]
 
 					// let apiserver know this node has the image
-					return c.String(http.StatusAccepted, instanceID)
+					return c.String(http.StatusAccepted, dockerID+" "+instanceID)
 				}
 			}
 
@@ -75,7 +78,7 @@ func handleRunPublicInstance(c echo.Context) error {
 			}
 
 			// ask unislet to run instance
-			resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+imageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}})
+			resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+imageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}, "dockerID": {""}})
 			if err != nil {
 				return c.String(http.StatusBadRequest, err.Error())
 			}
@@ -87,9 +90,12 @@ func handleRunPublicInstance(c echo.Context) error {
 			if err != nil {
 				logrus.Fatal(err)
 			}
-			instanceID := string(body)
 
-			return c.String(http.StatusOK, instanceID)
+			dockerID := strings.Split(string(body), " ")[0]
+			instanceID := strings.Split(string(body), " ")[1]
+
+			// let apiserver know this node has the image
+			return c.String(http.StatusOK, dockerID+" "+instanceID)
 		}
 	}
 	return c.String(http.StatusNotImplemented, "node info is different between apiserver and controller")
@@ -118,7 +124,7 @@ func handleRunPrivateInstance(c echo.Context) error {
 			for _, image := range node.Images {
 				if image.ImageID == imageID {
 					// ask unislet to run instance
-					resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+image.ImageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}})
+					resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+image.ImageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}, "dockerID": {image.DockerID}})
 					if err != nil {
 						return c.String(http.StatusBadRequest, err.Error())
 					}
@@ -130,10 +136,12 @@ func handleRunPrivateInstance(c echo.Context) error {
 					if err != nil {
 						logrus.Fatal(err)
 					}
-					instanceID := string(body)
+
+					dockerID := strings.Split(string(body), " ")[0]
+					instanceID := strings.Split(string(body), " ")[1]
 
 					// let apiserver know this node has the image
-					return c.String(http.StatusAccepted, instanceID)
+					return c.String(http.StatusAccepted, dockerID+" "+instanceID)
 				}
 			}
 
@@ -160,7 +168,7 @@ func handleRunPrivateInstance(c echo.Context) error {
 			}
 
 			// ask unislet to run instance
-			resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+imageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}})
+			resp, err := http.PostForm("http://"+strings.Split(node.NodeAddr, ":")[0]+":9899/instances/run/"+imageID, url.Values{"argument": {argument}, "command": {command}, "imageType": {imageType}, "dockerID": {""}})
 			if err != nil {
 				return c.String(http.StatusBadRequest, err.Error())
 			}
@@ -172,9 +180,12 @@ func handleRunPrivateInstance(c echo.Context) error {
 			if err != nil {
 				logrus.Fatal(err)
 			}
-			instanceID := string(body)
 
-			return c.String(http.StatusOK, instanceID)
+			dockerID := strings.Split(string(body), " ")[0]
+			instanceID := strings.Split(string(body), " ")[1]
+
+			// let apiserver know this node has the image
+			return c.String(http.StatusOK, dockerID+" "+instanceID)
 		}
 	}
 	return c.String(http.StatusNotImplemented, "node info is different between apiserver and controller")

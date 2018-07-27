@@ -146,17 +146,6 @@ func handlePrivateAdd(c echo.Context) error {
 			logrus.Fatal(err)
 		}
 
-		// // add new node to controller
-		// resp, err := http.PostForm("http://127.0.0.1:10000/nodes/add/"+username+"/"+nodename, url.Values{"nodename": {newNode.NodeName}, "nodetype": {newNode.NodeType},
-		// 	"nodeenv": {newNode.NodeEnv}, "nodeaddr": {newNode.NodeAddr}, "dockerinfo": {newNode.DockerInfo}, "hypervisorinfo": {newNode.HypervisorInfo},
-		// 	"totalcpu": {strconv.Itoa(int(newNode.TotalCPU))}, "totalmem": {strconv.Itoa(int(newNode.TotalMem))}})
-		// if err != nil {
-		// 	logrus.Fatal(err)
-		// }
-		// if resp.StatusCode != http.StatusOK {
-		// 	logrus.Fatal(resp.StatusCode)
-		// }
-
 		return c.String(http.StatusOK, "Node added")
 	}
 

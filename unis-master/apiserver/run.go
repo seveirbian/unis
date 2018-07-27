@@ -55,7 +55,9 @@ func handlePublicRun(c echo.Context) error {
 				if err != nil {
 					return c.String(http.StatusNotImplemented, "failed to deploy instance")
 				}
-				instanceID := string(body)
+
+				dockerID := strings.Split(string(body), " ")[0]
+				instanceID := strings.Split(string(body), " ")[1]
 
 				publicNodesInfo := getPublicNodesInfo()
 				for index, node := range publicNodesInfo {
@@ -68,6 +70,7 @@ func handlePublicRun(c echo.Context) error {
 								Repository: image.Repository,
 								Tag:        image.Tag,
 								ImageID:    image.ImageID,
+								DockerID:   dockerID,
 								Created:    image.Created,
 								Size:       image.Size,
 								Type:       image.Type,
@@ -81,6 +84,7 @@ func handlePublicRun(c echo.Context) error {
 							ImageRepository: image.Repository,
 							ImageTag:        image.Tag,
 							ImageID:         image.ImageID,
+							DockerID:        dockerID,
 							InstanceID:      instanceID,
 							RequestCPU:      int64(neededCPU),
 							RequestMem:      int64(neededMem),
@@ -120,12 +124,7 @@ func handlePrivateRun(c echo.Context) error {
 		// validate that the image exists
 		privateImagesInfo := getPrivateImagesInfo(username)
 		for _, image := range privateImagesInfo {
-			fmt.Println(image.ImageID)
-			fmt.Println(imageID)
 			if strings.Contains(image.ImageID, imageID) {
-
-				fmt.Println(image.ImageID)
-				fmt.Println(imageID)
 
 				// get the node that to deploy instance
 				privateNodesInfoSchedule := scheduler.GetPrivateNodesInfo(username)
@@ -150,7 +149,8 @@ func handlePrivateRun(c echo.Context) error {
 				if err != nil {
 					return c.String(http.StatusNotImplemented, "failed to deploy instance")
 				}
-				instanceID := string(body)
+				dockerID := strings.Split(string(body), " ")[0]
+				instanceID := strings.Split(string(body), " ")[1]
 
 				privateNodesInfo := getPrivateNodesInfo(username)
 				for index, node := range privateNodesInfo {
@@ -163,6 +163,7 @@ func handlePrivateRun(c echo.Context) error {
 								Repository: image.Repository,
 								Tag:        image.Tag,
 								ImageID:    image.ImageID,
+								DockerID:   dockerID,
 								Created:    image.Created,
 								Size:       image.Size,
 								Type:       image.Type,
@@ -176,6 +177,7 @@ func handlePrivateRun(c echo.Context) error {
 							ImageRepository: image.Repository,
 							ImageTag:        image.Tag,
 							ImageID:         image.ImageID,
+							DockerID:        dockerID,
 							InstanceID:      instanceID,
 							RequestCPU:      int64(neededCPU),
 							RequestMem:      int64(neededMem),
