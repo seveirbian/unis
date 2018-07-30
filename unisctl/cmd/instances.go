@@ -36,7 +36,7 @@ var instancesCmd = &cobra.Command{
 		var resp *http.Response
 		var err error
 		if instancesPublicFlag {
-			resp, err = http.PostForm(ConfigContent.Apiserver+"/instances/show/all/instances", url.Values{"username": {ConfigContent.Username}, "password": {ConfigContent.Password}})
+			resp, err = http.PostForm(ConfigContent.Apiserver+"/instances/show/public/instances", url.Values{"username": {ConfigContent.Username}, "password": {ConfigContent.Password}})
 		} else {
 			resp, err = http.PostForm(ConfigContent.Apiserver+"/instances/show/"+ConfigContent.Username+"/instances", url.Values{"password": {ConfigContent.Password}})
 		}

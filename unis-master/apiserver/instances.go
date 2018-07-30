@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func handleAllInstances(c echo.Context) error {
+func handlePublicInstances(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
