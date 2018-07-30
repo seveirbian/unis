@@ -13,7 +13,7 @@ Commands:
   images     List images in remote registry  
   nodes      Display the status of all edge nodes  
   ps         List containers  
-  pull(discard)       Pull an image from registry  
+  pull       Pull an image from registry  
   push       Push an image to registry  
   rmi        Remove one or more images in remote registry  
   run        Run a container on a edge node  

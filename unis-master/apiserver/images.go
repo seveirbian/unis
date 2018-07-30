@@ -2,7 +2,6 @@ package apiserver
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo"
 )
@@ -16,35 +15,28 @@ func handlePrivateImages(c echo.Context) error {
 
 		//generate response body
 		var bodyContent = ""
-		var blankLenth = 10
+		// var blankLenth = 10
 		for _, image := range imagesInfo {
 			bodyContent += image.Repository
-			bodyContent += EmptyString(strings.Count("Repository", "") +
-				blankLenth - strings.Count(image.Repository, ""))
+			bodyContent += " "
 
 			bodyContent += image.Tag
-			bodyContent += EmptyString(strings.Count("Tag", "") +
-				blankLenth - strings.Count(image.Tag, ""))
+			bodyContent += " "
 
 			bodyContent += Substring(image.ImageID, 0, 10)
-			bodyContent += EmptyString(strings.Count("Image ID", "") +
-				blankLenth - strings.Count(Substring(image.ImageID, 0, 10), ""))
+			bodyContent += " "
 
 			bodyContent += image.Created
-			bodyContent += EmptyString(strings.Count("Created", "") +
-				blankLenth - strings.Count(image.Created, ""))
+			bodyContent += " "
 
 			bodyContent += image.Size
-			bodyContent += EmptyString(strings.Count("Size", "") +
-				blankLenth - strings.Count(image.Size, ""))
+			bodyContent += " "
 
 			bodyContent += image.Type
-			bodyContent += EmptyString(strings.Count("Type", "") +
-				blankLenth - strings.Count(image.Type, ""))
+			bodyContent += " "
 
 			bodyContent += image.Owner
-			bodyContent += EmptyString(strings.Count("Owner", "") +
-				blankLenth - strings.Count(image.Owner, ""))
+			bodyContent += " "
 
 			bodyContent += "\n"
 		}
@@ -60,74 +52,59 @@ func handlePublicImages(c echo.Context) error {
 		//get public images info
 		publicImagesInfo := getPublicImagesInfo()
 
-		//get private images info
-		privateImagesInfo := getPrivateImagesInfo(username)
+		// //get private images info
+		// privateImagesInfo := getPrivateImagesInfo(username)
 
 		//generate response body
 		var bodyContent = ""
-		var blankLenth = 10
+		// var blankLenth = 10
 		for _, image := range publicImagesInfo {
 			bodyContent += image.Repository
-			bodyContent += EmptyString(strings.Count("Repository", "") +
-				blankLenth - strings.Count(image.Repository, ""))
+			bodyContent += " "
 
 			bodyContent += image.Tag
-			bodyContent += EmptyString(strings.Count("Tag", "") +
-				blankLenth - strings.Count(image.Tag, ""))
+			bodyContent += " "
 
 			bodyContent += Substring(image.ImageID, 0, 10)
-			bodyContent += EmptyString(strings.Count("Image ID", "") +
-				blankLenth - strings.Count(Substring(image.ImageID, 0, 10), ""))
+			bodyContent += " "
 
 			bodyContent += image.Created
-			bodyContent += EmptyString(strings.Count("Created", "") +
-				blankLenth - strings.Count(image.Created, ""))
+			bodyContent += " "
 
 			bodyContent += image.Size
-			bodyContent += EmptyString(strings.Count("Size", "") +
-				blankLenth - strings.Count(image.Size, ""))
+			bodyContent += " "
 
 			bodyContent += image.Type
-			bodyContent += EmptyString(strings.Count("Type", "") +
-				blankLenth - strings.Count(image.Type, ""))
+			bodyContent += " "
 
 			bodyContent += image.Owner
-			bodyContent += EmptyString(strings.Count("Owner", "") +
-				blankLenth - strings.Count(image.Owner, ""))
+			bodyContent += " "
 
 			bodyContent += "\n"
 		}
-		for _, image := range privateImagesInfo {
-			bodyContent += image.Repository
-			bodyContent += EmptyString(strings.Count("Repository", "") +
-				blankLenth - strings.Count(image.Repository, ""))
+		// for _, image := range privateImagesInfo {
+		// 	bodyContent += image.Repository
 
-			bodyContent += image.Tag
-			bodyContent += EmptyString(strings.Count("Tag", "") +
-				blankLenth - strings.Count(image.Tag, ""))
+		// 	bodyContent += image.Tag
+		// 	bodyContent += " "
 
-			bodyContent += Substring(image.ImageID, 0, 10)
-			bodyContent += EmptyString(strings.Count("Image ID", "") +
-				blankLenth - strings.Count(Substring(image.ImageID, 0, 10), ""))
+		// 	bodyContent += Substring(image.ImageID, 0, 10)
+		// 	bodyContent += " "
 
-			bodyContent += image.Created
-			bodyContent += EmptyString(strings.Count("Created", "") +
-				blankLenth - strings.Count(image.Created, ""))
+		// 	bodyContent += image.Created
+		// 	bodyContent += " "
 
-			bodyContent += image.Size
-			bodyContent += EmptyString(strings.Count("Size", "") +
-				blankLenth - strings.Count(image.Size, ""))
+		// 	bodyContent += image.Size
+		// 	bodyContent += " "
 
-			bodyContent += image.Type
-			bodyContent += EmptyString(strings.Count("Type", "") +
-				blankLenth - strings.Count(image.Type, ""))
+		// 	bodyContent += image.Type
+		// 	bodyContent += " "
 
-			bodyContent += image.Owner
-			bodyContent += EmptyString(strings.Count("Owner", "") +
-				blankLenth - strings.Count(image.Owner, ""))
+		// 	bodyContent += image.Owner
+		// 	bodyContent += " "
 
-			bodyContent += "\n"
-		}
+		// 	bodyContent += "\n"
+		// }
 		return c.String(http.StatusOK, bodyContent)
 	}
 	return c.String(http.StatusUnauthorized, "incorrect username or password")

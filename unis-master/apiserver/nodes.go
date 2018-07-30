@@ -17,101 +17,70 @@ func handlePublicNodes(c echo.Context) error {
 		publicNodesInfo := getPublicNodesInfo()
 
 		//get private nodes info
-		privateNodesInfo := getPrivateNodesInfo(username)
+		// privateNodesInfo := getPrivateNodesInfo(username)
 
 		//generate response body
 		var bodyContent = ""
-		var blankLenth = 10
+		// var blankLenth = 10
 		for _, node := range publicNodesInfo {
 			bodyContent += node.NodeName
-			bodyContent += EmptyString(strings.Count("Name", "") +
-				blankLenth - strings.Count(node.NodeName, ""))
+			bodyContent += " "
 
 			bodyContent += strings.Split(node.NodeAddr, ":")[0]
-			bodyContent += EmptyString(strings.Count("Addr", "") +
-				blankLenth - strings.Count(strings.Split(node.NodeAddr, ":")[0], ""))
+			bodyContent += " "
 
 			bodyContent += node.NodeType
-			bodyContent += EmptyString(strings.Count("Type", "") +
-				blankLenth - strings.Count(node.NodeType, ""))
+			bodyContent += " "
 
 			bodyContent += node.NodeEnv
-			bodyContent += EmptyString(strings.Count("Env", "") +
-				blankLenth - strings.Count(node.NodeEnv, ""))
+			bodyContent += " "
 
 			bodyContent += node.DockerInfo
-			bodyContent += EmptyString(strings.Count("Docker", "") +
-				blankLenth - strings.Count(node.DockerInfo, ""))
+			bodyContent += " "
 
 			bodyContent += node.HypervisorInfo
-			bodyContent += EmptyString(strings.Count("Hypervisor", "") +
-				blankLenth - strings.Count(node.HypervisorInfo, ""))
+			bodyContent += " "
 
 			bodyContent += strconv.Itoa(int(node.TotalCPU))
-			bodyContent += EmptyString(strings.Count("Avail CPU", "") +
-				blankLenth - strings.Count(strconv.Itoa(int(node.TotalCPU)), ""))
+			bodyContent += " "
 
 			bodyContent += strconv.Itoa(int(node.TotalMem))
-			bodyContent += EmptyString(strings.Count("Avail Mem", "") +
-				blankLenth - strings.Count(strconv.Itoa(int(node.TotalMem)), ""))
+			bodyContent += " "
 
 			if node.NodeActive {
 				bodyContent += "ACTIVE"
-				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
-					blankLenth - strings.Count("active", ""))
 			} else {
 				bodyContent += "DEAD"
-				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
-					blankLenth - strings.Count("dead", ""))
 			}
+			bodyContent += " "
 
 			bodyContent += "\n"
 		}
-		for _, node := range privateNodesInfo {
-			bodyContent += node.NodeName
-			bodyContent += EmptyString(strings.Count("Name", "") +
-				blankLenth - strings.Count(node.NodeName, ""))
+		// for _, node := range privateNodesInfo {
+		// 	bodyContent += node.NodeName
 
-			bodyContent += strings.Split(node.NodeAddr, ":")[0]
-			bodyContent += EmptyString(strings.Count("Addr", "") +
-				blankLenth - strings.Count(strings.Split(node.NodeAddr, ":")[0], ""))
+		// 	bodyContent += strings.Split(node.NodeAddr, ":")[0]
 
-			bodyContent += node.NodeType
-			bodyContent += EmptyString(strings.Count("Type", "") +
-				blankLenth - strings.Count(node.NodeType, ""))
+		// 	bodyContent += node.NodeType
 
-			bodyContent += node.NodeEnv
-			bodyContent += EmptyString(strings.Count("Env", "") +
-				blankLenth - strings.Count(node.NodeEnv, ""))
+		// 	bodyContent += node.NodeEnv
 
-			bodyContent += node.DockerInfo
-			bodyContent += EmptyString(strings.Count("Docker", "") +
-				blankLenth - strings.Count(node.DockerInfo, ""))
+		// 	bodyContent += node.DockerInfo
 
-			bodyContent += node.HypervisorInfo
-			bodyContent += EmptyString(strings.Count("Hypervisor", "") +
-				blankLenth - strings.Count(node.HypervisorInfo, ""))
+		// 	bodyContent += node.HypervisorInfo
 
-			bodyContent += strconv.Itoa(int(node.TotalCPU))
-			bodyContent += EmptyString(strings.Count("Avail CPU", "") +
-				blankLenth - strings.Count(strconv.Itoa(int(node.TotalCPU)), ""))
+		// 	bodyContent += strconv.Itoa(int(node.TotalCPU))
 
-			bodyContent += strconv.Itoa(int(node.TotalMem))
-			bodyContent += EmptyString(strings.Count("Avail Mem", "") +
-				blankLenth - strings.Count(strconv.Itoa(int(node.TotalMem)), ""))
+		// 	bodyContent += strconv.Itoa(int(node.TotalMem))
 
-			if node.NodeActive {
-				bodyContent += "ACTIVE"
-				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
-					blankLenth - strings.Count("active", ""))
-			} else {
-				bodyContent += "DEAD"
-				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
-					blankLenth - strings.Count("dead", ""))
-			}
+		// 	if node.NodeActive {
+		// 		bodyContent += "ACTIVE"
+		// 	} else {
+		// 		bodyContent += "DEAD"
+		// 	}
 
-			bodyContent += "\n"
-		}
+		// 	bodyContent += "\n"
+		// }
 		return c.String(http.StatusOK, bodyContent)
 	}
 
@@ -129,49 +98,37 @@ func handlePrivateNodes(c echo.Context) error {
 
 		//generate response body
 		var bodyContent = ""
-		var blankLenth = 10
 		for _, node := range privateNodesInfo {
 			bodyContent += node.NodeName
-			bodyContent += EmptyString(strings.Count("Name", "") +
-				blankLenth - strings.Count(node.NodeName, ""))
+			bodyContent += " "
 
 			bodyContent += strings.Split(node.NodeAddr, ":")[0]
-			bodyContent += EmptyString(strings.Count("Addr", "") +
-				blankLenth - strings.Count(strings.Split(node.NodeAddr, ":")[0], ""))
+			bodyContent += " "
 
 			bodyContent += node.NodeType
-			bodyContent += EmptyString(strings.Count("Type", "") +
-				blankLenth - strings.Count(node.NodeType, ""))
+			bodyContent += " "
 
 			bodyContent += node.NodeEnv
-			bodyContent += EmptyString(strings.Count("Env", "") +
-				blankLenth - strings.Count(node.NodeEnv, ""))
+			bodyContent += " "
 
 			bodyContent += node.DockerInfo
-			bodyContent += EmptyString(strings.Count("Docker", "") +
-				blankLenth - strings.Count(node.DockerInfo, ""))
+			bodyContent += " "
 
 			bodyContent += node.HypervisorInfo
-			bodyContent += EmptyString(strings.Count("Hypervisor", "") +
-				blankLenth - strings.Count(node.HypervisorInfo, ""))
+			bodyContent += " "
 
 			bodyContent += strconv.Itoa(int(node.TotalCPU))
-			bodyContent += EmptyString(strings.Count("Avail CPU", "") +
-				blankLenth - strings.Count(strconv.Itoa(int(node.TotalCPU)), ""))
+			bodyContent += " "
 
 			bodyContent += strconv.Itoa(int(node.TotalMem))
-			bodyContent += EmptyString(strings.Count("Avail Mem", "") +
-				blankLenth - strings.Count(strconv.Itoa(int(node.TotalMem)), ""))
+			bodyContent += " "
 
 			if node.NodeActive {
 				bodyContent += "ACTIVE"
-				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
-					blankLenth - strings.Count("active", ""))
 			} else {
 				bodyContent += "DEAD"
-				bodyContent += EmptyString(strings.Count("NODE STATUS", "") +
-					blankLenth - strings.Count("dead", ""))
 			}
+			bodyContent += " "
 
 			bodyContent += "\n"
 		}

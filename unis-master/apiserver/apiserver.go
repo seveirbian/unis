@@ -1,9 +1,6 @@
 package apiserver
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
@@ -95,66 +92,19 @@ func (apiServer Server) Serve(serveIP string) error {
 	server.POST("/nodes/leave/public/:nodename", handlePublicLeave)
 	server.POST("/nodes/leave/:username/:nodename", handlePrivateLeave)
 
+	// serve DASHBOARD
+	// serve "images num" command
+	server.POST("/images/get/public/number", handlePublicImagesNum)
+	server.POST("/images/get/:username/number", handlePrivateImagesNum)
+
+	// serve "nodes num" command
+	server.POST("/nodes/get/public/number", handlePublicNodesNum)
+	server.POST("/nodes/get/:username/number", handlePrivateNodesNum)
+
+	// serve "instances num" command
+	server.POST("/instances/get/public/number", handlePublicInstancesNum)
+	server.POST("/instances/get/:username/number", handlePrivateInstancesNum)
+
 	// Run request-handler, this should never exit
 	return server.Start(serveIP)
-}
-
-func handlePublicLeave(c echo.Context) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
-	nodename := c.Param("nodename")
-
-	if validateUser(username, password) {
-		publicNodesInfo := getPublicNodesInfo()
-		for index, node := range publicNodesInfo {
-			if node.NodeName == nodename {
-				publicNodesInfo[index].NodeActive = false
-
-				publicNodesInfoInJSON, err := json.Marshal(publicNodesInfo)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-
-				err = ioutil.WriteFile(serverFilePath.NodesPublicPath+"nodesInfo.json", publicNodesInfoInJSON, os.ModePerm)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-
-				return c.String(http.StatusOK, "node leaved")
-			}
-		}
-		return c.String(http.StatusNotImplemented, "node name error")
-	}
-
-	return c.String(http.StatusUnauthorized, "incorrect username or password")
-}
-
-func handlePrivateLeave(c echo.Context) error {
-	username := c.Param("username")
-	password := c.FormValue("password")
-	nodename := c.Param("nodename")
-
-	if validateUser(username, password) {
-		privateNodesInfo := getPrivateNodesInfo(username)
-		for index, node := range privateNodesInfo {
-			if node.NodeName == nodename {
-				privateNodesInfo[index].NodeActive = false
-
-				privateNodesInfoInJSON, err := json.Marshal(privateNodesInfo)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-
-				err = ioutil.WriteFile(serverFilePath.NodesPath+username+"/nodesInfo.json", privateNodesInfoInJSON, os.ModePerm)
-				if err != nil {
-					logrus.Fatal(err)
-				}
-
-				return c.String(http.StatusOK, "node leaved")
-			}
-		}
-		return c.String(http.StatusNotImplemented, "node name error")
-	}
-
-	return c.String(http.StatusUnauthorized, "incorrect username or password")
 }
