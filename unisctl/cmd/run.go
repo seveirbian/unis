@@ -70,7 +70,7 @@ func init() {
 	runCmd.Flags().StringVarP(&runInstanceArgument, "argument", "", "", "argument to start instance")
 	runCmd.Flags().StringVarP(&runInstanceCommand, "command", "", "", "command to start instance")
 
-	runCmd.Flags().StringVarP(&cpuRequest, "request-cpu", "c", "1", "request cpu to start instance")
+	runCmd.Flags().StringVarP(&cpuRequest, "request-cpu", "c", "0.5", "request cpu to start instance")
 	runCmd.MarkFlagRequired("request-cpu")
 
 	runCmd.Flags().StringVarP(&memRequest, "request-memory", "m", "200", "request mem to start instance")

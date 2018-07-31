@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/docker/client"
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
 )
@@ -54,22 +57,35 @@ func handleRunImage(c echo.Context) error {
 
 	// run docker instance
 	if imageType == "docker" {
+		ctx := context.Background()
+		cli, err := client.NewEnvClient()
+		if err != nil {
+			panic(err)
+		}
+
 		if dockerID == "" {
 			// import docker image
-			arg0 := "docker"
-			arg1 := "load"
-			arg2 := "-i"
-			arg3 := os.Getenv("HOME") + "/.unis/unislet/images/" + imageID
 
-			child := exec.Command(arg0, arg1, arg2, arg3)
-			output, err := child.Output()
-
-			fmt.Println(string(output))
-			dockerID = strings.Split(strings.Split(string(output), ": ")[1], "\n")[0]
-
+			imageFile, err := os.Open(os.Getenv("HOME") + "/.unis/unislet/images/" + imageID)
 			if err != nil {
-				logrus.Fatal(err)
+				return c.String(http.StatusNotImplemented, "image file not exists")
 			}
+
+			resp, err := cli.ImageLoad(ctx, imageFile, false)
+			if err != nil {
+				return c.String(http.StatusNotImplemented, "image load error!")
+			}
+
+			var result struct {
+				Stream string `json:"stream"`
+			}
+			err = json.NewDecoder(resp.Body).Decode(&result)
+			if err != nil {
+				return c.String(http.StatusNotImplemented, "decode failed")
+			}
+
+			dockerID = strings.Split(strings.Split(string(result.Stream), ": ")[1], "\n")[0]
+
 			fmt.Println(dockerID)
 		}
 
@@ -97,7 +113,7 @@ func handleRunImage(c echo.Context) error {
 		// docker run
 		instance := exec.Command("docker")
 		instance.Args = args
-		err := instance.Start()
+		err = instance.Start()
 
 		if err != nil {
 			fmt.Println(err)
@@ -109,7 +125,7 @@ func handleRunImage(c echo.Context) error {
 		// get instanceID
 		child1 := exec.Command("docker", "ps")
 		output, err := child1.Output()
-		if err != nil {
+		if err != nil || string(output) == "" {
 			return c.String(http.StatusNotImplemented, err.Error())
 		}
 

@@ -1,11 +1,15 @@
 package apiserver
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
@@ -16,14 +20,14 @@ func handlePublicPush(c echo.Context) error {
 	password := c.FormValue("password")
 
 	imagename := c.Param("imagename")
-
-	repository := c.FormValue("repository") + "/" + imagename
 	tag := c.FormValue("tag")
-	imageID := c.FormValue("imageID")
-	created := c.FormValue("created")
-	size := c.FormValue("size")
 	imageType := c.FormValue("imageType")
-	owner := c.FormValue("owner")
+
+	repository := "public" + "/" + imagename
+	var imageID string
+	var created string
+	var size string
+	owner := username
 
 	if validateUser(username, password) {
 		imagesInfo := getPublicImagesInfo()
@@ -57,6 +61,25 @@ func handlePublicPush(c echo.Context) error {
 		if err != nil {
 			logrus.Fatal(err)
 		}
+
+		// move from unisctl to here
+		//get image size
+		fileInfo, err := os.Stat(serverFilePath.ImagesPublicPath + imagename)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		size = strconv.FormatInt(fileInfo.Size()/1024/1024, 10)
+
+		created = string(time.Now().Format("2006-01-02"))
+		i := string(time.Now().Format("2006-01-02T15:04:05Z"))
+
+		if content, err := ioutil.ReadFile(serverFilePath.ImagesPublicPath + imagename); err != nil {
+			logrus.Fatal(err)
+		} else {
+			temp := sha256.Sum256([]byte(string(content) + i))
+			imageID = hex.EncodeToString(temp[:])
+		}
+		// move from unisctl to here
 
 		// use imageID as file name
 		err = os.Rename(serverFilePath.ImagesPublicPath+imagename, serverFilePath.ImagesPublicPath+imageID)
@@ -96,14 +119,15 @@ func handlePrivatePush(c echo.Context) error {
 	password := c.FormValue("password")
 
 	imagename := c.Param("imagename")
-
-	repository := c.FormValue("repository") + "/" + imagename
 	tag := c.FormValue("tag")
-	imageID := c.FormValue("imageID")
-	created := c.FormValue("created")
-	size := c.FormValue("size")
 	imageType := c.FormValue("imageType")
-	owner := c.FormValue("owner")
+
+	repository := username + "/" + imagename
+
+	var imageID string
+	var created string
+	var size string
+	owner := username
 
 	if validateUser(username, password) {
 		imagesInfo := getPrivateImagesInfo(username)
@@ -137,6 +161,25 @@ func handlePrivatePush(c echo.Context) error {
 		if err != nil {
 			logrus.Fatal(err)
 		}
+
+		// move from unisctl to here
+		//get image size
+		fileInfo, err := os.Stat(serverFilePath.ImagesPath + username + "/" + imagename)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		size = strconv.FormatInt(fileInfo.Size()/1024/1024, 10)
+
+		created = string(time.Now().Format("2006-01-02"))
+		i := string(time.Now().Format("2006-01-02T15:04:05Z"))
+
+		if content, err := ioutil.ReadFile(serverFilePath.ImagesPath + username + "/" + imagename); err != nil {
+			logrus.Fatal(err)
+		} else {
+			temp := sha256.Sum256([]byte(string(content) + i))
+			imageID = hex.EncodeToString(temp[:])
+		}
+		// move from unisctl to here
 
 		// use imageID as file name
 		err = os.Rename(serverFilePath.ImagesPath+username+"/"+imagename, serverFilePath.ImagesPath+username+"/"+imageID)
